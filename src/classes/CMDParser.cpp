@@ -145,13 +145,7 @@ namespace OWC {
             "     Center refers to the deadzone itself, 0 is the default value from GPD, roughtly ~15%.\n"
             "     A value of -10 removes the deadzone.\n"
             "     Boundary refers to the circularity, 0 is the default value from GPD, roughtly ~13% average error.\n"
-            "     A value of -10 should lessen the average error on circularity tests.\n\n"
-
-            "  Export/Import:\n"
-            "    You can export current firmware settings to file or apply mappings from file.\n"
-            "    The format used by this app is yaml.\n"
-            "    Export example: e sims3 (no extension required, this will export your current mapping to sims3.yaml\n"
-            "    Import example: i sims3.yaml (this will read, and apply, mapping from sims3.yaml\n";
+            "     A value of -10 should lessen the average error on circularity tests.\n\n";
     }
 
     void CMDParser::showKeys() const {
