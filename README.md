@@ -199,12 +199,6 @@ Notes:
      A value of -10 removes the deadzone.
      Boundary refers to the circularity, 0 is the default value from GPD, roughtly ~13% average error.
      A value of -10 should lessen the average error on circularity tests.
-
-  Export/Import:
-    You can export current firmware settings to file or apply mappings from file.
-    The format used by this app is yaml.
-    Export example: e sims3 (no extension required, this will export your current mapping to sims3.yaml
-    Import example: i sims3.yaml (this will read, and apply, mapping from sims3.yaml
 ```
 ## How to build
 
