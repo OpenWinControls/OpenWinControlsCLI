@@ -35,7 +35,6 @@ jobs:
            cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
            ninja -C build
            copy build\OpenWinControlsCLI.exe ${{github.workspace}}\owc_windows
-           windeployqt6.exe --no-translations --no-quick-import --no-opengl-sw --no-compiler-runtime ${{github.workspace}}/owc_windows/OpenWinControlsCLI.exe
 
       - name: upload windows release
         id: win_release_zip
