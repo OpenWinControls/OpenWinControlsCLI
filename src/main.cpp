@@ -17,7 +17,6 @@
  */
 #ifdef _WIN32
 #include "include/win.h"
-#include <algorithm>
 #endif
 #include <iostream>
 #include <fstream>
@@ -55,10 +54,10 @@ static std::string getProduct() {
 
     return prod;
 #elif defined(_WIN32)
-    std::string prod;
-    DWORD bufSz;
-    HKEY rkey;
+    DWORD bufSz = 0;
+    std::unique_ptr<TCHAR[]> buf;
     LSTATUS ret;
+    HKEY rkey;
 
     ret = RegOpenKeyExA(HKEY_LOCAL_MACHINE, R"(HARDWARE\DESCRIPTION\System\BIOS)", 0, KEY_READ, &rkey);
     if (ret != ERROR_SUCCESS) {
@@ -73,9 +72,10 @@ static std::string getProduct() {
         return "";
     }
 
-    prod.resize(++bufSz);
+    bufSz += sizeof(TCHAR);
+    buf = std::make_unique<TCHAR[]>(bufSz);
 
-    ret = RegGetValueA(rkey, nullptr, "BaseBoardProduct", RRF_RT_REG_SZ, nullptr, prod.data(), &bufSz);
+    ret = RegGetValueA(rkey, nullptr, "BaseBoardProduct", RRF_RT_REG_SZ, nullptr, buf.get(), &bufSz);
     if (ret != ERROR_SUCCESS) {
         std::cerr << "failed to read reg value, code " << ret;
         RegCloseKey(rkey);
@@ -83,8 +83,7 @@ static std::string getProduct() {
     }
 
     RegCloseKey(rkey);
-    std::erase_if(prod, [](const char c)->bool { return !std::isalnum(c) && !std::isprint(c); });
-    return prod;
+    return std::string(buf.get());
 #else
     return "";
 #endif

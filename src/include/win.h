@@ -25,7 +25,7 @@
 #define NOVIRTUALKEYCODES
 #define NOCLIPBOARD
 #ifdef UNICODE
-#undef  UNICODE
+#undef UNICODE
 #endif
 #include <Windows.h>
 #include <winreg.h>
