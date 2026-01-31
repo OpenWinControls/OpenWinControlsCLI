@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=OpenWinControlsCLI
+GenericName=OpenWinControlsCLI
+Comment=GPD WinControls replacement command-line
+Exec=OpenWinControlsCLI
+Icon=OpenWinControlsCLI
+Categories=Utility
