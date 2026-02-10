@@ -45,11 +45,19 @@ namespace OWC {
         return true;
     }
 
-    void FileLogger::write(const std::string &msg, const std::source_location loc) {
+    void FileLogger::write(const std::wstring &msg, const std::source_location loc) {
         if (!logF.is_open())
             return;
 
         logF << loc.file_name() << "\n[" << loc.function_name() << ":" << loc.line() << "]\n" << msg << "\n\n";
+        logF.flush();
+    }
+
+    void FileLogger::writeExt(const std::wstring &msg) {
+        if (!logF.is_open())
+            return;
+
+        logF << msg << "\n\n";
         logF.flush();
     }
 }

@@ -16,6 +16,8 @@ set(PROJECT_SRC
     src/classes/CMDParser.h
     src/classes/CMDParser.cpp
 
+    src/Utils.h
+    src/Utils.cpp
     src/main.cpp
 )
 

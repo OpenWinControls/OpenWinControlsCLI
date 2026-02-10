@@ -18,25 +18,13 @@
 #pragma once
 
 #include <memory>
-#include <fstream>
-#include <source_location>
 
-namespace OWC {
-    class FileLogger final {
-    private:
-        static inline std::shared_ptr<FileLogger> instance;
-        std::wofstream logF;
+#include "extern/libOpenWinControls/src/controller/Controller.h"
+#include "classes/CMDParser.h"
 
-        FileLogger() = default;
-
-    public:
-        FileLogger(FileLogger &) = delete;
-
-        ~FileLogger();
-
-        static std::shared_ptr<FileLogger> getInstance();
-        [[nodiscard]] bool init();
-        void write(const std::wstring &msg, std::source_location loc = std::source_location::current());
-        void writeExt(const std::wstring &msg);
-    };
+namespace OWCL {
+    void printCurrentSettings(const std::shared_ptr<OWC::Controller> &gpd);
+    [[nodiscard]] int exportToYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName);
+    [[nodiscard]] int importFromYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName);
+    [[nodiscard]] int writeConfig(const std::shared_ptr<OWC::Controller> &gpd, const OWC::CMDParser &cmd);
 }

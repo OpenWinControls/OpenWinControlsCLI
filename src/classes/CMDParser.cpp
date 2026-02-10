@@ -18,6 +18,7 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <cstring>
 
 #include "CMDParser.h"
 #include "../version.h"
@@ -49,96 +50,80 @@ namespace OWC {
             "    Print current firmware settings\n\n"
 
             "Options:\n\n"
-            "  du\n"
+            "  du [key]\n"
             "    Assign dpad up a key\n\n"
-            "  dd\n"
+            "  dd [key]\n"
             "    Assign dpad down a key\n\n"
-            "  dl\n"
+            "  dl [key]\n"
             "    Assign dpad left a key\n\n"
-            "  dr\n"
+            "  dr [key]\n"
             "    Assign dpad right a key\n\n"
-            "  a\n"
+            "  a [key]\n"
             "    Assign A button a key\n\n"
-            "  b\n"
+            "  b [key]\n"
             "    Assign B button a key\n\n"
-            "  x\n"
+            "  x [key]\n"
             "    Assign X button a key\n\n"
-            "  y\n"
+            "  y [key]\n"
             "    Assign Y button a key\n\n"
-            "  lu\n"
+            "  lu [key]\n"
             "    Assign left analog up a key\n\n"
-            "  ld\n"
+            "  ld [key]\n"
             "    Assign left analog down a key\n\n"
-            "  ll\n"
+            "  ll [key]\n"
             "    Assign left analog left a key\n\n"
-            "  lr\n"
+            "  lr [key]\n"
             "    Assign left analog right a key\n\n"
-            "  st\n"
+            "  st [key]\n"
             "    Assign start button a key\n\n"
-            "  sl\n"
+            "  sl [key]\n"
             "    Assign select button a key\n\n"
-            "  mu\n"
+            "  mu [key]\n"
             "    Assign menu button a key\n\n"
-            "  l1\n"
+            "  l1 [key]\n"
             "    Assign L1 button a key\n\n"
-            "  l2\n"
+            "  l2 [key]\n"
             "    Assign L2 button a key\n\n"
-            "  l3\n"
+            "  l3 [key]\n"
             "    Assign L3 button a key\n\n"
-            "  r1\n"
+            "  r1 [key]\n"
             "    Assign R1 button a key\n\n"
-            "  r2\n"
+            "  r2 [key]\n"
             "    Assign R2 button a key\n\n"
-            "  r3\n"
+            "  r3 [key]\n"
             "    Assign R3 button a key\n\n"
-            "  bl1\n"
-            "    Assign left back button slot 1 a key\n\n"
-            "  bl1d\n"
-            "    Set left back button slot 1 key delay in milliseconds\n\n"
-            "  bl2\n"
-            "    Assign left back button slot 2 a key\n\n"
-            "  bl2d\n"
-            "    Set left back button slot 2 key delay in milliseconds\n\n"
-            "  bl3\n"
-            "    Assign left back button slot 3 a key\n\n"
-            "  bl3d\n"
-            "    Set left back button slot 3 key delay in milliseconds\n\n"
-            "  bl4\n"
-            "    Assign left back button slot 4 a key\n\n"
-            "  bl4d\n"
-            "    Set left back button slot 4 key delay in milliseconds\n\n"
-            "  br1\n"
-            "    Assign right back button slot 1 a key\n\n"
-            "  br1d\n"
-            "    Set right back button slot 1 key delay in milliseconds\n\n"
-            "  br2\n"
-            "    Assign right back button slot 2 a key\n\n"
-            "  br2d\n"
-            "    Set right back button slot 2 key delay in milliseconds\n\n"
-            "  br3\n"
-            "    Assign right back button slot 3 a key\n\n"
-            "  br3d\n"
-            "    Set right back button slot 3 key delay in milliseconds\n\n"
-            "  br4\n"
-            "    Assign right back button slot 4 a key\n\n"
-            "  br4d\n"
-            "    Set right back button slot 4 key delay in milliseconds\n\n"
-            "  rmb\n"
+            "  l4 [key1,key2,key3..]\n"
+            "    Comma separated list of keys\n"
+            "    Assign L4 back button macro\n\n"
+            "  l4d [time1,time2..]\n"
+            "    Comma separated list of times\n"
+            "    Set L4 back button keys start time in milliseconds\n\n"
+            "  r4 [key1,key2,key3..]\n"
+            "    Comma separated list of keys\n"
+            "    Assign R4 back button macro\n\n"
+            "  r4d [time1,time2..]\n"
+            "    Comma separated list of times\n"
+            "    Set R4 back button keys start time in milliseconds\n\n"
+            "  rmb [mode]\n"
             "    Set vibration intensity [off, low, high]\n\n"
-            "  lc\n"
+            "  lc [value]\n"
             "    Adjust left analog deadzone [-10, +10]\n\n"
-            "  lb\n"
+            "  lb [value]\n"
             "    Adjust left analog boundary [-10, +10]\n\n"
-            "  rc\n"
+            "  rc [value]\n"
             "    Adjust right analog deadzone [-10, +10]\n\n"
-            "  rb\n"
+            "  rb [value]\n"
             "    Adjust right analog boundary [-10, +10]\n\n"
-            "  led\n"
+            "  led [mode]\n"
             "    Set shoulder buttons led mode [off, solid, breathe, rotate]\n\n"
-            "  ledclr\n"
+            "  ledclr [R:G:B]\n"
             "    Set shoulder buttons led color [R:G:B] [0-255]\n\n"
 
             "Notes:\n\n"
+            "  Controller V1 features:\n"
+            "     Support up to 4 key/time slots for back buttons macro.\n"
+            "     If more keys/times are provied, they will be ignored.\n"
+            "     The 4th time slot is special, it sets the whole macro start time.\n\n"
 
             "  Deadzone settings:\n"
             "     This is composed of two values, center and boundary.\n"
@@ -174,9 +159,7 @@ namespace OWC {
                 isArg("lu") || isArg("ld") || isArg("ll") || isArg("lr") ||
                 isArg("st") || isArg("sl") || isArg("mu") || isArg("l1") ||
                 isArg("l2") || isArg("l3") || isArg("r1") || isArg("r2") ||
-                isArg("r3") || isArg("bl1") || isArg("bl2") || isArg("bl3") ||
-                isArg("bl4") || isArg("br1") || isArg("br2") || isArg("br3") ||
-                isArg("br4"))
+                isArg("r3"))
             {
                 std::string key = argV[1];
 
@@ -184,10 +167,33 @@ namespace OWC {
                 std::transform(key.begin(), key.end(), key.begin(), ::toupper);
                 args.emplace(argV[0], key);
 
-            } else if (isArg("bl1d") || isArg("bl2d") || isArg("bl3d") ||
-                isArg("bl4d") || isArg("br1d") || isArg("br2d") || isArg("br3d") ||
-                isArg("br4d") || isArg("lc") || isArg("lb") || isArg("rc") || isArg("rb"))
-            {
+            } else if (isArg("l4") || isArg("r4")) {
+                std::vector<std::string> keys;
+                char *s = strtok(argV[1], ",");
+
+                while (s != nullptr) {
+                    std::string key = s;
+
+                    std::transform(key.begin(), key.end(), key.begin(), ::toupper);
+                    keys.emplace_back(key);
+                    s = strtok(nullptr, ",");
+                }
+
+                args.emplace(argV[0], keys);
+
+            } else if (isArg("l4d") || isArg("r4d")) {
+                std::vector<int> times;
+                char *s = strtok(argV[1], ",");
+
+                while (s != nullptr) {
+                    times.emplace_back(std::stoi(s));
+
+                    s = strtok(nullptr, ",");
+                }
+
+                args.emplace(argV[0], times);
+
+            } else if (isArg("lc") || isArg("lb") || isArg("rc") || isArg("rb")) {
                 args.emplace(argV[0], std::stoi(argV[1]));
 
             } else if (isArg("rmb")) {

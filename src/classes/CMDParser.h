@@ -20,9 +20,10 @@
 #include <map>
 #include <string>
 #include <variant>
+#include <vector>
 
 namespace OWC {
-    typedef std::variant<std::string, int, std::tuple<int, int, int>> owc_arg_value;
+    typedef std::variant<std::string, int, std::tuple<int, int, int>, std::vector<std::string>, std::vector<int>> owc_arg_value;
 
     class CMDParser final {
     private:
