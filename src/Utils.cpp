@@ -52,12 +52,12 @@ namespace OWCL {
     static void printControllerVersion(const std::shared_ptr<OWC::Controller> &gpd) {
         if (gpd->getControllerType() == 1) {
             const std::shared_ptr<OWC::ControllerV1> gpdV1 = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd);
-            const auto &[xmin, xmaj] = gpdV1->getXVersion();
-            const auto &[kmin, kmaj] = gpdV1->getKVersion();
+            const auto [xmaj, xmin] = gpdV1->getXVersion();
+            const auto [kmaj, kmin] = gpdV1->getKVersion();
 
             std::cout << "=== Controller Firmware Version ===\n\n" <<
-                "Xinput Mode:\t\t" << xmin << "." << xmaj << "\n" <<
-                "Keyboard&Mouse Mode:\t" << kmin << "." << kmaj << "\n";
+                "Xinput Mode:\t\t" << xmaj << "." << xmin << "\n" <<
+                "Keyboard&Mouse Mode:\t" << kmaj << "." << kmin << "\n";
         }
     }
 
