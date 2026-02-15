@@ -135,7 +135,7 @@ namespace OWC {
 
     void CMDParser::showKeys() const {
         std::cout << APP_NAME << " " << APP_VER_MAJOR << "." << APP_VER_MINOR << "\n\n"
-            "Here an almost complete list of possible values to assign:\n";
+            "Keyboard[&Mouse] mode key values:\n";
 
         for (const auto &[code, key]: HIDUsageIDMap)
             std::cout << "  " << key << "\n";
