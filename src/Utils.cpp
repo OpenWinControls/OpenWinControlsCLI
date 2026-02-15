@@ -87,27 +87,22 @@ namespace OWCL {
     }
 
     static void printBackButtonsV1(const std::shared_ptr<OWC::Controller> &gpd) {
-        std::cout << "\n=== L4 Back Button Macro ===\n\n"
+        int num = 1;
 
-            "Key 1:\t\t\t" << gpd->getBackButton(1, 1) << "\n"
-            "Key 1 Start Time:\t" << gpd->getBackButtonStartTime(1, 1) << "\n"
-            "Key 2:\t\t\t" << gpd->getBackButton(1, 2) << "\n"
-            "Key 2 Start Time:\t" << gpd->getBackButtonStartTime(1, 2) << "\n"
-            "Key 3:\t\t\t" << gpd->getBackButton(1, 3) << "\n"
-            "Key 3 Start Time:\t" << gpd->getBackButtonStartTime(1, 3) << "\n"
-            "Key 4:\t\t\t" << gpd->getBackButton(1, 4) << "\n"
-            "Macro Start Time:\t" << gpd->getBackButtonStartTime(1, 4) << "\n"
+        for (const std::string_view btn: {"L4", "R4"}) {
+            std::cout << "\n=== " << btn << " Back Button Macro ===\n\n"
 
-            "\n=== R4 Back Button Macro ===\n\n"
+                "Key 1:\t\t\t" << gpd->getBackButton(num, 1) << "\n"
+                "Key 1 Start Time:\t" << gpd->getBackButtonStartTime(num, 1) << "\n"
+                "Key 2:\t\t\t" << gpd->getBackButton(num, 2) << "\n"
+                "Key 2 Start Time:\t" << gpd->getBackButtonStartTime(num, 2) << "\n"
+                "Key 3:\t\t\t" << gpd->getBackButton(num, 3) << "\n"
+                "Key 3 Start Time:\t" << gpd->getBackButtonStartTime(num, 3) << "\n"
+                "Key 4:\t\t\t" << gpd->getBackButton(num, 4) << "\n"
+                "Macro Start Time:\t" << gpd->getBackButtonStartTime(num, 4) << "\n";
 
-            "Key 1:\t\t\t" << gpd->getBackButton(2, 1) << "\n"
-            "Key 1 Start Time:\t" << gpd->getBackButtonStartTime(2, 1) << "\n"
-            "Key 2:\t\t\t" << gpd->getBackButton(2, 2) << "\n"
-            "Key 2 Start Time:\t" << gpd->getBackButtonStartTime(2, 2) << "\n"
-            "Key 3:\t\t\t" << gpd->getBackButton(2, 3) << "\n"
-            "Key 3 Start Time:\t" << gpd->getBackButtonStartTime(2, 3) << "\n"
-            "Key 4:\t\t\t" << gpd->getBackButton(2, 4) << "\n"
-            "Macro Start Time:\t" << gpd->getBackButtonStartTime(2, 4) << "\n";
+            ++num;
+        }
     }
 
     void printCurrentSettings(const std::shared_ptr<OWC::Controller> &gpd) {
@@ -148,22 +143,20 @@ namespace OWCL {
     }
 
     static void exportBackButtonsV1Yaml(const std::shared_ptr<OWC::Controller> &gpd, std::ofstream &ofs) {
-        ofs << "L4_K1: " << gpd->getBackButton(1, 1) << "\n"
-            "L4_K1_START_TIME: " << gpd->getBackButtonStartTime(1, 1) << "\n"
-            "L4_K2: " << gpd->getBackButton(1, 2) << "\n"
-            "L4_K2_START_TIME: " << gpd->getBackButtonStartTime(1, 2) << "\n"
-            "L4_K3: " << gpd->getBackButton(1, 3) << "\n"
-            "L4_K3_START_TIME: " << gpd->getBackButtonStartTime(1, 3) << "\n"
-            "L4_K4: " << gpd->getBackButton(1, 4) << "\n"
-            "L4_MACRO_START_TIME: " << gpd->getBackButtonStartTime(1, 4) << "\n"
+        int num = 1;
 
-            "R4_K1: " << gpd->getBackButton(2, 1) << "\n"
-            "R4_K1_START_TIME: " << gpd->getBackButtonStartTime(2, 1) << "\n"
-            "R4_K2: " << gpd->getBackButton(2, 2) << "\n"
-            "R4_K2_START_TIME: " << gpd->getBackButtonStartTime(2, 2) << "\n"
-            "R4_K3: " << gpd->getBackButton(2, 3) << "\n"
-            "R4_K3_START_TIME: " << gpd->getBackButtonStartTime(2, 3) << "\n"
-            "R4_K4: " << gpd->getBackButton(2, 4) << "\n"
+        for (const std::string_view btn: {"L4", "R4"}) {
+            for (int i=1; i<=4; ++i) {
+                ofs << btn << "_K" << i << ": " << gpd->getBackButton(num, i) << "\n";
+
+                if (i < 4)
+                    ofs << btn << "_k" << i << "_START_TIME: " << gpd->getBackButtonStartTime(num, i) << "\n";
+            }
+
+            ++num;
+        }
+
+        ofs << "L4_MACRO_START_TIME: " << gpd->getBackButtonStartTime(1, 4) << "\n"
             "R4_MACRO_START_TIME: " << gpd->getBackButtonStartTime(2, 4) << "\n";
     }
 
@@ -190,37 +183,31 @@ namespace OWCL {
     }
 
     static void importBackButtonsV1Yaml(const std::shared_ptr<OWC::Controller> &gpd, const YAML::Node &yaml) {
-        for (int i=1; i<=4; ++i) {
-            const std::string btnlK = std::format("L4_K{}", i);
-            const std::string btnrK = std::format("R4_K{}", i);
+        int num = 1;
 
-            if (yaml[btnlK] && !gpd->setBackButton(1, i, yaml[btnlK].as<std::string>()))
-                std::cerr << "failed to set " << btnlK << "\n";
+        for (const std::string_view btn: {"L4", "R4"}) {
+            for (int i=1; i<=4; ++i) {
+                const std::string key = std::format("{}_K{}", btn, i);
+                std::string keyCode = yaml[key].as<std::string>();
 
-            if (yaml[btnrK] && !gpd->setBackButton(2, i, yaml[btnrK].as<std::string>()))
-                std::cerr << "failed to set " << btnrK << "\n";
+                std::transform(keyCode.begin(), keyCode.end(), keyCode.begin(), ::toupper);
+
+                if (yaml[key] && !gpd->setBackButton(num, i, keyCode))
+                    std::cerr << "failed to set " << key << "\n";
+
+                if (i < 4) {
+                    const std::string time = std::format("{}_K{}_START_TIME", btn, i);
+
+                    if (yaml[time])
+                        gpd->setBackButtonStartTime(num, i, yaml[time].as<int>());
+                }
+            }
+
+            ++num;
         }
-
-        if (yaml["L4_K1_START_TIME"])
-            gpd->setBackButtonStartTime(1, 1, yaml["L4_K1_START_TIME"].as<int>());
-
-        if (yaml["L4_K2_START_TIME"])
-            gpd->setBackButtonStartTime(1, 2, yaml["L4_K2_START_TIME"].as<int>());
-
-        if (yaml["L4_K3_START_TIME"])
-            gpd->setBackButtonStartTime(1, 3, yaml["L4_K3_START_TIME"].as<int>());
 
         if (yaml["L4_MACRO_START_TIME"])
             gpd->setBackButtonStartTime(1, 4, yaml["L4_MACRO_START_TIME"].as<int>());
-
-        if (yaml["R4_K1_START_TIME"])
-            gpd->setBackButtonStartTime(2, 1, yaml["R4_K1_START_TIME"].as<int>());
-
-        if (yaml["R4_K2_START_TIME"])
-            gpd->setBackButtonStartTime(2, 2, yaml["R4_K2_START_TIME"].as<int>());
-
-        if (yaml["R4_K3_START_TIME"])
-            gpd->setBackButtonStartTime(2, 3, yaml["R4_K3_START_TIME"].as<int>());
 
         if (yaml["R4_MACRO_START_TIME"])
             gpd->setBackButtonStartTime(2, 4, yaml["R4_MACRO_START_TIME"].as<int>());
@@ -262,36 +249,34 @@ namespace OWCL {
     }
 
     static void writeConfigBackButtonsV1(const std::shared_ptr<OWC::Controller> &gpd, const OWC::CMDParser &cmd) {
-        if (cmd.hasArg("l4")) {
-            const std::vector<std::string> keys = std::get<std::vector<std::string>>(cmd.getValue("l4"));
+        int num = 1;
+
+        for (const std::string_view btn: {"l4", "r4"}) {
+            if (!cmd.hasArg(btn.data()))
+                continue;
+
+            const std::vector<std::string> keys = std::get<std::vector<std::string>>(cmd.getValue(btn.data()));
 
             for (int i=0,l=keys.size(); i<l && i<4; ++i) {
-                if (!gpd->setBackButton(1, i+1, keys[i]))
-                    std::cerr << "failed to set L4 slot " << i << "\n";
+                if (!gpd->setBackButton(num, i+1, keys[i]))
+                    std::cerr << "failed to set L4 slot " << (i + 1) << "\n";
             }
+
+            ++num;
         }
 
-        if (cmd.hasArg("r4")) {
-            const std::vector<std::string> keys = std::get<std::vector<std::string>>(cmd.getValue("r4"));
+        num = 1;
 
-            for (int i=0,l=keys.size(); i<l && i<4; ++i) {
-                if (!gpd->setBackButton(2, i+1, keys[i]))
-                    std::cerr << "failed to set R4 slot " << i << "\n";
-            }
-        }
+        for (const std::string_view btn: {"l4d", "r4d"}) {
+            if (!cmd.hasArg(btn.data()))
+                continue;
 
-        if (cmd.hasArg("l4d")) {
-            const std::vector<int> times = std::get<std::vector<int>>(cmd.getValue("l4d"));
+            const std::vector<int> times = std::get<std::vector<int>>(cmd.getValue(btn.data()));
 
             for (int i=0,l=times.size(); i<l && i<4; ++i)
-                gpd->setBackButtonStartTime(1, i+1, times[i]);
-        }
+                gpd->setBackButtonStartTime(num, i+1, times[i]);
 
-        if (cmd.hasArg("r4d")) {
-            const std::vector<int> times = std::get<std::vector<int>>(cmd.getValue("r4d"));
-
-            for (int i=0,l=times.size(); i<l && i<4; ++i)
-                gpd->setBackButtonStartTime(2, i+1, times[i]);
+            ++num;
         }
     }
 
