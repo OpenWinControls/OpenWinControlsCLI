@@ -105,38 +105,29 @@ static std::shared_ptr<OWC::Controller> getDevice(const std::string &product) {
 
 [[nodiscard]]
 static bool isCompatible(const std::string &product, const std::shared_ptr<OWC::Controller> &gpd) {
+    std::pair<int, int> version = {0, 0};
+    bool compCheck = false;
+
     /*if (product == win3) {
         return true;
 
     } else*/ if (product == win4) {
-        const auto [major, minor] = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        const bool compCheck = major >= 4 && minor >= 7;
-
-        if (!compCheck)
-            std::cout << "version " << major << "." << minor << " is not supported\n";
-
-        return compCheck;
+        version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
+        compCheck = version.first >= 4 && version.second >= 7;
 
     } else if (product == mini23 || product == mini24) {
-        const auto [major, minor] = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        const bool compCheck = major >= 5 && minor >= 3;
-
-        if (!compCheck)
-            std::cout << "version " << major << "." << minor << " is not supported\n";
-
-        return compCheck;
+        version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
+        compCheck = version.first >= 5 && version.second >= 3;
 
     } else if (product == max2_22 || product == max2_25) {
-        const auto [major, minor] = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        const bool compCheck = major >= 1 && minor >= 23;
-
-        if (!compCheck)
-            std::cout << "version " << major << "." << minor << " is not supported\n";
-
-        return compCheck;
+        version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
+        compCheck = version.first >= 1 && version.second >= 23;
     }
 
-    return false;
+    if (!compCheck)
+        std::cout << "version " << version.first << "." << version.second << " is not supported, please update.\n";
+
+    return compCheck;
 }
 
 int main(int argc, char *argv[]) {
