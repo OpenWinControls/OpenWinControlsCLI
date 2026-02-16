@@ -25,6 +25,7 @@
 #include  "Utils.h"
 #include "extern/libOpenWinControls/src/include/ControllerFeature.h"
 #include "extern/libOpenWinControls/src/controller/ControllerV1.h"
+#include "extern/libOpenWinControls/src/controller/ControllerV2.h"
 
 static constexpr char win3[] = "G1618-03";
 static constexpr char win4[] = "G1618-04";
@@ -95,8 +96,10 @@ static std::shared_ptr<OWC::Controller> getDevice(const std::string &product) {
         device = std::make_shared<OWC::ControllerV1>(OWC::ControllerFeature::DeadZoneControlV1 | OWC::ControllerFeature::RumbleV1);
     //else if (product == win3)
     //    device = std::make_shared<OWC::ControllerV1>();
-//    else if (product == win5 || product == mini25)
-//        device = std::make_shared<OWC::ControllerV2>();
+    else if (product == win5)
+        device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1);
+    else if (product == mini25)
+        device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::DeadZoneControlV1 | OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1);
     else
         std::cerr << "unknown device: " << product << "\n";
 
@@ -122,6 +125,14 @@ static bool isCompatible(const std::string &product, const std::shared_ptr<OWC::
     } else if (product == max2_22 || product == max2_25) {
         version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
         compCheck = version.first >= 1 && version.second >= 23;
+
+    } else if (product == win5) {
+        version = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd)->getVersion();
+        compCheck = version.first >= 1 && version.second >= 8;
+
+    } else if (product == mini25) {
+        version = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd)->getVersion();
+        compCheck = version.first >= 1 && version.second >= 22;
     }
 
     if (!compCheck)

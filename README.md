@@ -10,6 +10,19 @@ Multiplatform GPD WinControls replacement, command-line version.
 - Allows to remap all buttons
 - Allows to change controller settings, like deadzone, leds etc.., where available
 
+## Known device firmware bugs (must be fixed by GPD)
+
+### Win5
+
+- RT and LT ignore the keycode value in firmware config
+- All back button modes don't work as expected
+- Back buttons send F14 (for l4) and F15 (for r4) keycodes in addition to the user defined keycode,
+  disrupting the correct functionality of the macro mode
+- Controller may softlock itself when entering sleep mode by the OS, no longer processing commands,
+  requiring the user to manually switch mode back and forth using the physical button on device
+- Config is not written to the controller if OS enters sleep mode soon after write command is issued, wait 10-15 secs
+- Mappings may be reverted to a previous state, after device reboot/poweroff, in some unknown circumstances
+
 ## Linux
 
 Root permissions are required.
@@ -32,9 +45,11 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 ## Usage
 
 ```text
-OpenWinControlsCLI 1.0
+OpenWinControlsCLI 2.0
 
 Usage: OpenWinControlsCLI command [args]
+
+Some options only apply to V1 or V2, incompatible options, if provided, are ignored.
 
 Commands:
 
@@ -42,7 +57,10 @@ Commands:
     show help
 
   keys
-    print supported keys
+    print supported keyboard[&mouse] mode keys
+
+  xkeys
+    print supported xinput mode keys
 
   set option value [..]
     set firmware settings
@@ -59,139 +77,198 @@ Commands:
 
 Options:
 
-  du
+  du [key]
     Assign dpad up a key
 
-  dd
+  dd [key]
     Assign dpad down a key
 
-  dl
+  dl [key]
     Assign dpad left a key
 
-  dr
+  dr [key]
     Assign dpad right a key
 
-  a
+  a [key]
     Assign A button a key
 
-  b
+  b [key]
     Assign B button a key
 
-  x
+  x [key]
     Assign X button a key
 
-  y
+  y [key]
     Assign Y button a key
 
-  lu
+  lu [key]
     Assign left analog up a key
 
-  ld
+  ld [key]
     Assign left analog down a key
 
-  ll
+  ll [key]
     Assign left analog left a key
 
-  lr
+  lr [key]
     Assign left analog right a key
 
-  st
+  st [key]
     Assign start button a key
 
-  sl
+  sl [key]
     Assign select button a key
 
-  mu
+  mu [key]
     Assign menu button a key
 
-  l1
+  l1 [key]
     Assign L1 button a key
 
-  l2
+  l2 [key]
     Assign L2 button a key
 
-  l3
+  l3 [key]
     Assign L3 button a key
 
-  r1
+  r1 [key]
     Assign R1 button a key
 
-  r2
+  r2 [key]
     Assign R2 button a key
 
-  r3
+  r3 [key]
     Assign R3 button a key
 
-  bl1
-    Assign left back button slot 1 a key
+  xdu [xinput button]
+    Reassign dpad up button
 
-  bl1d
-    Set left back button slot 1 key delay in milliseconds
+  xdd [xinput button]
+    Reassign dpad down button
 
-  bl2
-    Assign left back button slot 2 a key
+  xdl [xinput button]
+    Reassign dpad left button
 
-  bl2d
-    Set left back button slot 2 key delay in milliseconds
+  xdr [xinput button]
+    Reassign dpad right button
 
-  bl3
-    Assign left back button slot 3 a key
+  xa [xinput button]
+    Reassign A button button
 
-  bl3d
-    Set left back button slot 3 key delay in milliseconds
+  xb [xinput button]
+    Reassign B button button
 
-  bl4
-    Assign left back button slot 4 a key
+  xx [xinput button]
+    Reassign X button button
 
-  bl4d
-    Set left back button slot 4 key delay in milliseconds
+  xy [xinput button]
+    Reassign Y button button
 
-  br1
-    Assign right back button slot 1 a key
+  xlu [xinput button]
+    Reassign left analog up button
 
-  br1d
-    Set right back button slot 1 key delay in milliseconds
+  xld [xinput button]
+    Reassign left analog down button
 
-  br2
-    Assign right back button slot 2 a key
+  xll [xinput button]
+    Reassign left analog left button
 
-  br2d
-    Set right back button slot 2 key delay in milliseconds
+  xlr [xinput button]
+    Reassign left analog right button
 
-  br3
-    Assign right back button slot 3 a key
+  xru [xinput button]
+    Reassign right analog up button
 
-  br3d
-    Set right back button slot 3 key delay in milliseconds
+  xrd [xinput button]
+    Reassign right analog down button
 
-  br4
-    Assign right back button slot 4 a key
+  xrl [xinput button]
+    Reassign right analog left button
 
-  br4d
-    Set right back button slot 4 key delay in milliseconds
+  xrr [xinput button]
+    Reassign right analog right button
 
-  rmb
-    Set vibration intensity [off, low, high]
+  xst [xinput button]
+    Reassign start button button
 
-  lc
+  xsl [xinput button]
+    Reassign select button button
+
+  xmu [xinput button]
+    Reassign menu button button
+
+  xl1 [xinput button]
+    Reassign L1 button button
+
+  xl2 [xinput button]
+    Reassign L2 button button
+
+  xl3 [xinput button]
+    Reassign L3 button button
+
+  xr1 [xinput button]
+    Reassign R1 button button
+
+  xr2 [xinput button]
+    Reassign R2 button button
+
+  xr3 [xinput button]
+    Reassign R3 button button
+
+  l4 [key1,key2,key3..]
+    Comma separated list of keys
+    Assign L4 back button
+
+  l4d [time1,time2..]
+    Comma separated list of times
+    Set L4 back button keys start time in milliseconds
+
+  l4h [time1,time2..]
+    Comma separated list of times
+    Set L4 back button keys hold time in milliseconds
+
+  r4 [key1,key2,key3..]
+    Comma separated list of keys
+    Assign R4 back button
+
+  r4d [time1,time2..]
+    Comma separated list of times
+    Set R4 back button keys start time in milliseconds
+
+  r4h [time1,time2..]
+    Comma separated list of times
+    Set R4 back button keys hold time in milliseconds
+
+  rmb [mode]
+    Set vibration intensity [0 = off, 1 = low, 2 = high]
+
+  lc [value]
     Adjust left analog deadzone [-10, +10]
 
-  lb
+  lb [value]
     Adjust left analog boundary [-10, +10]
 
-  rc
+  rc [value]
     Adjust right analog deadzone [-10, +10]
 
-  rb
+  rb [value]
     Adjust right analog boundary [-10, +10]
 
-  led
-    Set shoulder buttons led mode [off, solid, breathe, rotate]
+  led [mode]
+    Set shoulder buttons led mode [0 = off, 1 = solid, 2 = breathe, 3 = rotate]
 
-  ledclr
-    Set shoulder buttons led color [R:G:B] [0-255]
+  ledclr [R:G:B]
+    Set shoulder buttons led color [0-255:0-255:0-255]
 
 Notes:
+
+  Controller V1 features:
+     Support up to 4 key/time slots for back buttons macro.
+     If more keys/times are provied, they will be ignored.
+     The 4th time slot is special, it sets the whole macro start time.
+
+  Controller V2 features:
+     Support up to 32 key/time/hold slots for back buttons.
 
   Deadzone settings:
      This is composed of two values, center and boundary.

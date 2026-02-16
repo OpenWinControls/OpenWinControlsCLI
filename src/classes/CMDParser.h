@@ -33,6 +33,7 @@ namespace OWC {
 
         void showHelp() const;
         void showKeys() const;
+        void showXKeys() const;
         [[nodiscard]] bool isArg(std::string_view arg) const;
         [[nodiscard]] bool parseSetOptions();
 

@@ -20,8 +20,10 @@
 #include <format>
 
 #include "Utils.h"
+#include "extern/libOpenWinControls/src/Utils.h"
 #include "extern/libOpenWinControls/src/include/ControllerFeature.h"
 #include "extern/libOpenWinControls/src/controller/ControllerV1.h"
+#include "extern/libOpenWinControls/src/controller/ControllerV2.h"
 #include "extern/yaml-cpp/include/yaml-cpp/yaml.h"
 
 namespace OWCL {
@@ -49,16 +51,101 @@ namespace OWCL {
         {"MENU", OWC::Button::KBD_MENU}
     }};
 
-    static void printControllerVersion(const std::shared_ptr<OWC::Controller> &gpd) {
-        if (gpd->getControllerType() == 1) {
-            const std::shared_ptr<OWC::ControllerV1> gpdV1 = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd);
-            const auto [xmaj, xmin] = gpdV1->getXVersion();
-            const auto [kmaj, kmin] = gpdV1->getKVersion();
+    static constexpr std::array<std::pair<std::string_view, OWC::Button>, 25> xinptKeys = {{
+        {"X_A", OWC::Button::X_A},
+        {"X_B", OWC::Button::X_B},
+        {"X_X", OWC::Button::X_X},
+        {"X_Y", OWC::Button::X_Y},
+        {"X_DPAD_UP", OWC::Button::X_DPAD_UP},
+        {"X_DPAD_DOWN", OWC::Button::X_DPAD_DOWN},
+        {"X_DPAD_LEFT", OWC::Button::X_DPAD_LEFT},
+        {"X_DPAD_RIGHT", OWC::Button::X_DPAD_RIGHT},
+        {"X_L_ANALOG_UP", OWC::Button::X_LANALOG_UP},
+        {"X_L_ANALOG_DOWN", OWC::Button::X_LANALOG_DOWN},
+        {"X_L_ANALOG_LEFT", OWC::Button::X_LANALOG_LEFT},
+        {"X_L_ANALOG_RIGHT", OWC::Button::X_LANALOG_RIGHT},
+        {"X_R_ANALOG_UP", OWC::Button::X_RANALOG_UP},
+        {"X_R_ANALOG_DOWN", OWC::Button::X_RANALOG_DOWN},
+        {"X_R_ANALOG_LEFT", OWC::Button::X_RANALOG_LEFT},
+        {"X_R_ANALOG_RIGHT", OWC::Button::X_RANALOG_RIGHT},
+        {"X_L1", OWC::Button::X_L1},
+        {"X_L2", OWC::Button::X_L2},
+        {"X_L3", OWC::Button::X_L3},
+        {"X_R1", OWC::Button::X_R1},
+        {"X_R2", OWC::Button::X_R2},
+        {"X_R3", OWC::Button::X_R3},
+        {"X_START", OWC::Button::X_START},
+        {"X_SELECT", OWC::Button::X_SELECT},
+        {"X_MENU", OWC::Button::X_MENU}
+    }};
 
-            std::cout << "=== Controller Firmware Version ===\n\n" <<
-                "Xinput Mode:\t\t" << xmaj << "." << xmin << "\n" <<
-                "Keyboard&Mouse Mode:\t" << kmaj << "." << kmin << "\n";
-        }
+    static constexpr std::array<std::tuple<std::string_view, OWC::Button, std::string_view>, 21> keyArgs = {{
+        {"du", OWC::Button::KBD_DPAD_UP, "dpad up"},
+        {"dd", OWC::Button::KBD_DPAD_DOWN, "dpad down"},
+        {"dl", OWC::Button::KBD_DPAD_LEFT, "dpad left"},
+        {"dr", OWC::Button::KBD_DPAD_RIGHT, "dpad right"},
+        {"a",  OWC::Button::KBD_A, "A"},
+        {"b",  OWC::Button::KBD_B, "B"},
+        {"x",  OWC::Button::KBD_X, "X"},
+        {"y",  OWC::Button::KBD_Y, "Y"},
+        {"lu", OWC::Button::KBD_LANALOG_UP, "left analog up"},
+        {"ld", OWC::Button::KBD_LANALOG_DOWN, "left analog down"},
+        {"ll", OWC::Button::KBD_LANALOG_LEFT, "left analog left"},
+        {"lr", OWC::Button::KBD_LANALOG_RIGHT, "left analog right"},
+        {"st", OWC::Button::KBD_START, "start"},
+        {"sl", OWC::Button::KBD_SELECT, "select"},
+        {"mu", OWC::Button::KBD_MENU, "menu"},
+        {"l1", OWC::Button::KBD_L1, "L1"},
+        {"l2", OWC::Button::KBD_L2, "L2"},
+        {"l3", OWC::Button::KBD_L3, "L3"},
+        {"r1", OWC::Button::KBD_R1, "R1"},
+        {"r2", OWC::Button::KBD_R2, "R2"},
+        {"r3", OWC::Button::KBD_R3, "R3"}
+    }};
+
+    static constexpr std::array<std::tuple<std::string_view, OWC::Button, std::string_view>, 25> xkeyArgs = {{
+        {"xdu", OWC::Button::X_DPAD_UP, "xinput dpad up"},
+        {"xdd", OWC::Button::X_DPAD_DOWN, "xinput dpad down"},
+        {"xdl", OWC::Button::X_DPAD_LEFT, "xinput dpad left"},
+        {"xdr", OWC::Button::X_DPAD_RIGHT, "xinput dpad right"},
+        {"xa",  OWC::Button::X_A, "xinput A"},
+        {"xb",  OWC::Button::X_B, "xinput B"},
+        {"xx",  OWC::Button::X_X, "xinput X"},
+        {"xy",  OWC::Button::X_Y, "xinput Y"},
+        {"xlu", OWC::Button::X_LANALOG_UP, "xinput left analog up"},
+        {"xld", OWC::Button::X_LANALOG_DOWN, "xinput left analog down"},
+        {"xll", OWC::Button::X_LANALOG_LEFT, "xinput left analog left"},
+        {"xlr", OWC::Button::X_LANALOG_RIGHT, "xinput left analog right"},
+        {"xru", OWC::Button::X_RANALOG_UP, "xinput right analog up"},
+        {"xrd", OWC::Button::X_RANALOG_DOWN, "xinput right analog down"},
+        {"xrl", OWC::Button::X_RANALOG_LEFT, "xinput right analog left"},
+        {"xrr", OWC::Button::X_RANALOG_RIGHT, "xinput right analog right"},
+        {"xst", OWC::Button::X_START, "xinput start"},
+        {"xsl", OWC::Button::X_SELECT, "xinput select"},
+        {"xmu", OWC::Button::X_MENU, "xinput menu"},
+        {"xl1", OWC::Button::X_L1, "xinput L1"},
+        {"xl2", OWC::Button::X_L2, "xinput L2"},
+        {"xl3", OWC::Button::X_L3, "xinput L3"},
+        {"xr1", OWC::Button::X_R1, "xinput R1"},
+        {"xr2", OWC::Button::X_R2, "xinput R2"},
+        {"xr3", OWC::Button::X_R3, "xinput R3"}
+    }};
+
+    static void printControllerInfoV1(const std::shared_ptr<OWC::ControllerV1> &gpd) {
+        const auto [xmaj, xmin] = gpd->getXVersion();
+        const auto [kmaj, kmin] = gpd->getKVersion();
+
+        std::cout << "=== Controller V1 Info ===\n\n"
+            "Xinput Version:\t\t" << xmaj << "." << xmin << "\n" <<
+            "Keyboard&Mouse Version:\t" << kmaj << "." << kmin << "\n";
+    }
+
+    static void printControllerInfoV2(const std::shared_ptr<OWC::ControllerV2> &gpd) {
+        const auto [major, minor] = gpd->getVersion();
+
+        std::cout << "=== Controller V2 Info ===\n\n"
+            "Version:\t\t" << major << "." << minor << "\n"
+            "Emulation Mode:\t\t" << OWC::emulationModeToString(gpd->getEmulationMode()) << "\n";
     }
 
     static void printKeyboardMouseMapping(const std::shared_ptr<OWC::Controller> &gpd) {
@@ -86,6 +173,38 @@ namespace OWCL {
             "R3:\t\t\t" << gpd->getButton(OWC::Button::KBD_R3) << "\n";
     }
 
+    static void printXinputMapping(const std::shared_ptr<OWC::Controller> &gpd) {
+        if (!gpd->hasFeature(OWC::ControllerFeature::XinputMappingV1))
+            return;
+
+        std::cout << "\n=== Xinput Mapping ===\n\n" <<
+            "DPAD Up:\t\t" << gpd->getButton(OWC::Button::X_DPAD_UP) << "\n"
+            "DPAD Down:\t\t" << gpd->getButton(OWC::Button::X_DPAD_DOWN) << "\n"
+            "DPAD Left:\t\t" << gpd->getButton(OWC::Button::X_DPAD_LEFT) << "\n"
+            "DPAD Right:\t\t" << gpd->getButton(OWC::Button::X_DPAD_RIGHT) << "\n"
+            "A:\t\t\t" << gpd->getButton(OWC::Button::X_A) << "\n"
+            "B:\t\t\t" << gpd->getButton(OWC::Button::X_B) << "\n"
+            "X:\t\t\t" << gpd->getButton(OWC::Button::X_X) << "\n"
+            "Y:\t\t\t" << gpd->getButton(OWC::Button::X_Y) << "\n"
+            "Start:\t\t\t" << gpd->getButton(OWC::Button::X_START) << "\n"
+            "Select:\t\t\t" << gpd->getButton(OWC::Button::X_SELECT) << "\n"
+            "Menu:\t\t\t" << gpd->getButton(OWC::Button::X_MENU) << "\n"
+            "Left Analog Up:\t\t" << gpd->getButton(OWC::Button::X_LANALOG_UP) << "\n"
+            "Left Analog Down:\t" << gpd->getButton(OWC::Button::X_LANALOG_DOWN) << "\n"
+            "Left Analog Left:\t" << gpd->getButton(OWC::Button::X_LANALOG_LEFT) << "\n"
+            "Left Analog Right:\t" << gpd->getButton(OWC::Button::X_LANALOG_RIGHT) << "\n"
+            "Right Analog Up:\t" << gpd->getButton(OWC::Button::X_RANALOG_UP) << "\n"
+            "Right Analog Down:\t" << gpd->getButton(OWC::Button::X_RANALOG_DOWN) << "\n"
+            "Right Analog Left:\t" << gpd->getButton(OWC::Button::X_RANALOG_LEFT) << "\n"
+            "Right Analog Right:\t" << gpd->getButton(OWC::Button::X_RANALOG_RIGHT) << "\n"
+            "L1:\t\t\t" << gpd->getButton(OWC::Button::X_L1) << "\n"
+            "L2:\t\t\t" << gpd->getButton(OWC::Button::X_L2) << "\n"
+            "L3:\t\t\t" << gpd->getButton(OWC::Button::X_L3) << "\n"
+            "R1:\t\t\t" << gpd->getButton(OWC::Button::X_R1) << "\n"
+            "R2:\t\t\t" << gpd->getButton(OWC::Button::X_R2) << "\n"
+            "R3:\t\t\t" << gpd->getButton(OWC::Button::X_R3) << "\n";
+    }
+
     static void printBackButtonsV1(const std::shared_ptr<OWC::Controller> &gpd) {
         int num = 1;
 
@@ -105,41 +224,86 @@ namespace OWCL {
         }
     }
 
-    void printCurrentSettings(const std::shared_ptr<OWC::Controller> &gpd) {
-        printControllerVersion(gpd);
-        printKeyboardMouseMapping(gpd);
+    static void printBackButtonsV2(const std::shared_ptr<OWC::ControllerV2> &gpd) {
+        int num = 1;
 
-        if (gpd->getControllerType() == 1)
+        for (const std::string_view btn: {"L4", "R4"}) {
+            std::cout << "\n=== " << btn << " Back Button ===\n\n"
+
+                "Button Mode:\t" << OWC::backButtonModeToString(gpd->getBackButtonMode(num)) << "\n"
+                //"Macro type:\t" << OWC::backButtonMacroTypeToString(gpd->getBackButtonMacroType(num)) << "\n"
+                "Active slots:\t" << gpd->getBackButtonActiveSlots(num) << "\n\n";
+
+            for (int i=1; i<=32; ++i) {
+                std::cout << "Key " << i << ":\t\t\t" << gpd->getBackButton(num, i) << "\n"
+                    "Key " << i << " Start Time:\t" << gpd->getBackButtonStartTime(num, i) << "\n"
+                    "Key " << i << " Hold Time:\t" << gpd->getBackButtonHoldTime(num, i) << "\n";
+            }
+
+            ++num;
+        }
+    }
+
+    static void printRumbleV1(const std::shared_ptr<OWC::Controller> &gpd) {
+        if (!gpd->hasFeature(OWC::ControllerFeature::RumbleV1))
+            return;
+
+        std::cout << "\n=== Rumble ===\n\n"
+            "Vibration intensity:\t" << OWC::rumbleModeToString(gpd->getRumbleMode()) << "\n";
+    }
+
+    static void printDeadzoneControlV1(const std::shared_ptr<OWC::Controller> &gpd) {
+        if (!gpd->hasFeature(OWC::ControllerFeature::DeadZoneControlV1))
+            return;
+
+        std::cout << "\n=== Calibration/Deadzone ===\n\n"
+            "Left Analog deadzone:\t" << gpd->getAnalogCenter(true) << "\n"
+            "Left Analog boundary:\t" << gpd->getAnalogBoundary(true) << "\n"
+            "Right Analog deadzone:\t" << gpd->getAnalogCenter(false) << "\n"
+            "Right Analog boundary:\t" << gpd->getAnalogBoundary(false) << "\n";
+    }
+
+    static void printShoulderLedsV1(const std::shared_ptr<OWC::Controller> &gpd) {
+        if (!gpd->hasFeature(OWC::ControllerFeature::ShoulderLedsV1))
+            return;
+
+        const OWC::LedMode mode = gpd->getLedMode();
+
+        std::cout << "\n=== Shoulder LEDs ===\n\n"
+            "Mode:\t\t\t" << OWC::ledModeToString(mode) << "\n";
+
+        if (mode != OWC::LedMode::Off && mode != OWC::LedMode::Rotate) {
+            const std::tuple<int, int, int> color = gpd->getLedColor();
+
+            std::cout << "Color:\t\t\t"
+                "R(" << std::get<0>(color) << "), "
+                "G(" << std::get<1>(color) << "), "
+                "B(" << std::get<2>(color) << ")\n";
+        }
+    }
+
+    void printCurrentSettings(const std::shared_ptr<OWC::Controller> &gpd) {
+        const int controllerType = gpd->getControllerType();
+
+        if (controllerType == 1) {
+            const std::shared_ptr<OWC::ControllerV1> gpdV1 = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd);
+
+            printControllerInfoV1(gpdV1);
+            printKeyboardMouseMapping(gpd);
             printBackButtonsV1(gpd);
 
-        if (gpd->hasFeature(OWC::ControllerFeature::RumbleV1)) {
-            std::cout << "\n=== Rumble ===\n\n"
-                "Vibration intensity:\t" << gpd->getRumbleMode() << "\n";
+        } else if (controllerType == 2) {
+            const std::shared_ptr<OWC::ControllerV2> gpdV2 = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd);
+
+            printControllerInfoV2(gpdV2);
+            printKeyboardMouseMapping(gpd);
+            printXinputMapping(gpd);
+            printBackButtonsV2(gpdV2);
         }
 
-        if (gpd->hasFeature(OWC::ControllerFeature::DeadZoneControlV1)) {
-            std::cout << "\n=== Calibration/Deadzone ===\n\n"
-                "Left Analog deadzone:\t" << gpd->getAnalogCenter(true) << "\n"
-                "Left Analog boundary:\t" << gpd->getAnalogBoundary(true) << "\n"
-                "Right Analog deadzone:\t" << gpd->getAnalogCenter(false) << "\n"
-                "Right Analog boundary:\t" << gpd->getAnalogBoundary(false) << "\n";
-        }
-
-        if (gpd->hasFeature(OWC::ControllerFeature::ShoulderLedsV1)) {
-            const std::string mode = gpd->getLedMode();
-
-            std::cout << "\n=== Shoulder LEDs ===\n\n"
-                "Mode:\t\t\t" << mode << "\n";
-
-            if (mode != "off" && mode != "rotate") {
-                const std::tuple<int, int, int> color = gpd->getLedColor();
-
-                std::cout << "Color:\t\t\t"
-                    "R(" << std::get<0>(color) << "), "
-                    "G(" << std::get<1>(color) << "), "
-                    "B(" << std::get<2>(color) << ")\n";
-            }
-        }
+        printRumbleV1(gpd);
+        printDeadzoneControlV1(gpd);
+        printShoulderLedsV1(gpd);
     }
 
     static void exportBackButtonsV1Yaml(const std::shared_ptr<OWC::Controller> &gpd, std::ofstream &ofs) {
@@ -160,7 +324,26 @@ namespace OWCL {
             "R4_MACRO_START_TIME: " << gpd->getBackButtonStartTime(2, 4) << "\n";
     }
 
+    static void exportBackButtonsV2Yaml(const std::shared_ptr<OWC::ControllerV2> &gpd, std::ofstream &ofs) {
+        int num = 1;
+
+        for (const std::string_view btn: {"L4", "R4"}) {
+            for (int i=1; i<=32; ++i) {
+                ofs << btn << "_K" << i <<": " << gpd->getBackButton(num, i) << "\n" <<
+                    btn << "_K" << i << "_START_TIME: " << gpd->getBackButtonStartTime(num, i) << "\n" <<
+                    btn << "_K" << i << "_HOLD_TIME: " << gpd->getBackButtonHoldTime(num, i) << "\n";
+            }
+
+            /*ofs << btn << "_MODE: " << static_cast<int>(gpd->getBackButtonMode(num)) << "\n" <<
+                btn << "_MACRO_TYPE: " << static_cast<int>(gpd->getBackButtonMacroType(num)) << "\n" <<
+                btn << "_ACTIVE_SLOTS: " << gpd->getBackButtonActiveSlots(num) << "\n";*/
+
+            ++num;
+        }
+    }
+
     int exportToYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName) {
+        const int controllerType = gpd->getControllerType();
         std::ofstream yaml (fileName);
 
         if (!yaml.is_open()) {
@@ -168,14 +351,25 @@ namespace OWCL {
             return 1;
         }
 
-        yaml << "MAPPING_TYPE: " << gpd->getControllerType() << "\n";
+        yaml << "MAPPING_TYPE: " << controllerType << "\n";
 
         // keyboard&mouse mapping
         for (const auto &[key, btn]: kbmKeys)
             yaml << std::format("{}: ", key) << gpd->getButton(btn) << "\n";
 
-        if (gpd->getControllerType() == 1)
+        if (gpd->hasFeature(OWC::ControllerFeature::XinputMappingV1)) {
+            for (const auto &[key, btn]: xinptKeys)
+                yaml << std::format("{}: ", key) << gpd->getButton(btn) << "\n";
+        }
+
+        if (controllerType == 1) {
             exportBackButtonsV1Yaml(gpd, yaml);
+
+        } else if (controllerType == 2) {
+            const std::shared_ptr<OWC::ControllerV2> gpdV2 = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd);
+
+            exportBackButtonsV2Yaml(gpdV2, yaml);
+        }
 
         yaml.close();
         std::cout << "exported config to " << fileName << "\n";
@@ -213,7 +407,47 @@ namespace OWCL {
             gpd->setBackButtonStartTime(2, 4, yaml["R4_MACRO_START_TIME"].as<int>());
     }
 
+    static void importBackButtonsV2Yaml(const std::shared_ptr<OWC::ControllerV2> &gpd, const YAML::Node &yaml) {
+        int num = 1;
+
+        for (const std::string_view btn: {"L4", "R4"}) {
+            /*const std::string mode = std::format("{}_MODE", btn);
+            const std::string type = std::format("{}_MACRO_TYPE", btn);
+            const std::string activeC = std::format("{}_ACTIVE_SLOTS", btn);*/
+
+            for (int i=1; i<=32; ++i) {
+                const std::string key = std::format("{}_K{}", btn, i);
+                const std::string time = std::format("{}_K{}_START_TIME", btn, i);
+                const std::string hold = std::format("{}_K{}_HOLD_TIME", btn, i);
+                std::string kc = yaml[key].as<std::string>();
+
+                std::transform(kc.begin(), kc.end(), kc.begin(), ::toupper);
+
+                if (yaml[key] && !gpd->setBackButton(num, i, kc))
+                    std::cerr << "failed to set " << key << "\n";
+
+                if (yaml[time])
+                    gpd->setBackButtonStartTime(num, i, yaml[time].as<int>());
+
+                if (yaml[hold])
+                    gpd->setBackButtonHoldTime(num, i, yaml[hold].as<int>());
+            }
+
+            /*if (yaml[mode])
+                gpd->setBackButtonMode(num, static_cast<OWC::BackButtonMode>(std::clamp(yaml[mode].as<int>(), 0, 2)));
+
+            if (yaml[type])
+                gpd->setBackButtonMacroType(num, static_cast<OWC::BackButtonMacroType>(std::clamp(yaml[type].as<int>(), 0, 1)));
+
+            if (yaml[activeC])
+                gpd->setBackButtonActiveSlots(num, yaml[activeC].as<int>());*/
+
+            ++num;
+        }
+    }
+
     int importFromYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName) {
+        const int controllerType = gpd->getControllerType();
         const YAML::Node yaml = YAML::LoadFile(fileName);
 
         if (!yaml.IsMap()) {
@@ -225,19 +459,46 @@ namespace OWCL {
             std::cerr << "mapping type missing, cannot apply mapping\n";
             return 1;
 
-        } else if (yaml["MAPPING_TYPE"].as<int>() != gpd->getControllerType()) {
+        } else if (yaml["MAPPING_TYPE"].as<int>() != controllerType) {
             std::cerr << "wrong mapping type for this controller, cannot apply\n";
             return 1;
         }
 
         // keyboard&mouse mapping
         for (const auto &[key, btn]: kbmKeys) {
-            if (yaml[key] && !gpd->setButton(btn, yaml[key].as<std::string>()))
+            if (!yaml[key])
+                continue;
+
+            std::string kc = yaml[key].as<std::string>();
+
+            std::transform(kc.begin(), kc.end(), kc.begin(), ::toupper);
+
+            if (!gpd->setButton(btn, kc))
                 std::cerr << "failed to set " << key << "\n";
         }
 
-        if (gpd->getControllerType() == 1)
+        if (gpd->hasFeature(OWC::ControllerFeature::XinputMappingV1)) {
+            for (const auto &[key, btn]: xinptKeys) {
+                if (!yaml[key])
+                    continue;
+
+                std::string kc = yaml[key].as<std::string>();
+
+                std::transform(kc.begin(), kc.end(), kc.begin(), ::toupper);
+
+                if (!gpd->setButton(btn, kc))
+                    std::cerr << "failed to set " << key << "\n";
+            }
+        }
+
+        if (controllerType == 1) {
             importBackButtonsV1Yaml(gpd, yaml);
+
+        } else if (controllerType == 2) {
+            const std::shared_ptr<OWC::ControllerV2> gpdV2 = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd);
+
+            importBackButtonsV2Yaml(gpdV2, yaml);
+        }
 
         if (!gpd->writeConfig()) {
             std::cerr << "failed to write controller\n";
@@ -259,7 +520,7 @@ namespace OWCL {
 
             for (int i=0,l=keys.size(); i<l && i<4; ++i) {
                 if (!gpd->setBackButton(num, i+1, keys[i]))
-                    std::cerr << "failed to set L4 slot " << (i + 1) << "\n";
+                    std::cerr << "failed to set " << btn << " slot " << (i + 1) << "\n";
             }
 
             ++num;
@@ -280,75 +541,91 @@ namespace OWCL {
         }
     }
 
+    static void writeConfigBackButtonsV2(const std::shared_ptr<OWC::ControllerV2> &gpd, const OWC::CMDParser &cmd) {
+        int num = 1;
+
+        for (const std::string_view btn: {"l4", "r4"}) {
+            if (!cmd.hasArg(btn.data()))
+                continue;
+
+            const std::vector<std::string> keys = std::get<std::vector<std::string>>(cmd.getValue(btn.data()));
+            //int slotsC = 0;
+
+            for (int i=0,l=keys.size(); i<l && i<32; ++i) {
+                //if (keys[i] != "UNSET")
+                    //++slotsC;
+
+                if (!gpd->setBackButton(num, i+1, keys[i]))
+                    std::cerr << "failed to set " << btn << " slot " << (i + 1) << "\n";
+            }
+
+            /*
+            if (keys.size() == 1)
+                gpd->setBackButtonMode(num, OWC::BackButtonMode::Single);
+            else if (keys.size() <= 4)
+                gpd->setBackButtonMode(num, OWC::BackButtonMode::Four);
+            else
+                gpd->setBackButtonMode(num, OWC::BackButtonMode::Macro);
+
+            gpd->setBackButtonActiveSlots(num, std::clamp(slotsC, 0, 32));*/
+            ++num;
+        }
+
+        num = 1;
+
+        for (const std::string_view btn: {"l4d", "r4d"}) {
+            if (!cmd.hasArg(btn.data()))
+                continue;
+
+            const std::vector<int> times = std::get<std::vector<int>>(cmd.getValue(btn.data()));
+
+            for (int i=0,l=times.size(); i<l && i<32; ++i)
+                gpd->setBackButtonStartTime(num, i+1, times[i]);
+
+            ++num;
+        }
+
+        num = 1;
+
+        for (const std::string_view btn: {"l4h", "r4h"}) {
+            if (!cmd.hasArg(btn.data()))
+                continue;
+
+            const std::vector<int> times = std::get<std::vector<int>>(cmd.getValue(btn.data()));
+
+            for (int i=0,l=times.size(); i<l && i<32; ++i)
+                gpd->setBackButtonHoldTime(num, i+1, times[i]);
+
+            ++num;
+        }
+    }
+
     int writeConfig(const std::shared_ptr<OWC::Controller> &gpd, const OWC::CMDParser &cmd) {
-        if (cmd.hasArg("du") && !gpd->setButton(OWC::Button::KBD_DPAD_UP, std::get<std::string>(cmd.getValue("du"))))
-            std::cerr << "failed to set dpad up\n";
+        const int controllerType = gpd->getControllerType();
 
-        if (cmd.hasArg("dd") && !gpd->setButton(OWC::Button::KBD_DPAD_DOWN, std::get<std::string>(cmd.getValue("dd"))))
-            std::cerr << "failed to set dpad down\n";
+        for (const auto [karg, btn, desc]: keyArgs) {
+            if (cmd.hasArg(karg.data()) && !gpd->setButton(btn, std::get<std::string>(cmd.getValue(karg.data()))))
+                std::cerr << "failed to set " << desc << "\n";
+        }
 
-        if (cmd.hasArg("dl") && !gpd->setButton(OWC::Button::KBD_DPAD_LEFT, std::get<std::string>(cmd.getValue("dl"))))
-            std::cerr << "failed to set dpad left\n";
+        if (gpd->hasFeature(OWC::ControllerFeature::XinputMappingV1)) {
+            for (const auto [karg, btn, desc]: xkeyArgs) {
+                if (cmd.hasArg(karg.data()) && !gpd->setButton(btn, std::get<std::string>(cmd.getValue(karg.data()))))
+                    std::cerr << "failed to set " << desc << "\n";
+            }
+        }
 
-        if (cmd.hasArg("dr") && !gpd->setButton(OWC::Button::KBD_DPAD_RIGHT, std::get<std::string>(cmd.getValue("dr"))))
-            std::cerr << "failed to set dpad right\n";
-
-        if (cmd.hasArg("a") && !gpd->setButton(OWC::Button::KBD_A, std::get<std::string>(cmd.getValue("a"))))
-            std::cerr << "failed to set A\n";
-
-        if (cmd.hasArg("b") && !gpd->setButton(OWC::Button::KBD_B, std::get<std::string>(cmd.getValue("b"))))
-            std::cerr << "failed to set B\n";
-
-        if (cmd.hasArg("x") && !gpd->setButton(OWC::Button::KBD_X, std::get<std::string>(cmd.getValue("x"))))
-            std::cerr << "failed to set X\n";
-
-        if (cmd.hasArg("y") && !gpd->setButton(OWC::Button::KBD_Y, std::get<std::string>(cmd.getValue("y"))))
-            std::cerr << "failed to set Y\n";
-
-        if (cmd.hasArg("lu") && !gpd->setButton(OWC::Button::KBD_LANALOG_UP, std::get<std::string>(cmd.getValue("lu"))))
-            std::cerr << "failed to set left analog up\n";
-
-        if (cmd.hasArg("ld") && !gpd->setButton(OWC::Button::KBD_LANALOG_DOWN, std::get<std::string>(cmd.getValue("ld"))))
-            std::cerr << "failed to set left analog down\n";
-
-        if (cmd.hasArg("ll") && !gpd->setButton(OWC::Button::KBD_LANALOG_LEFT, std::get<std::string>(cmd.getValue("ll"))))
-            std::cerr << "failed to set left analog left\n";
-
-        if (cmd.hasArg("lr") && !gpd->setButton(OWC::Button::KBD_LANALOG_RIGHT, std::get<std::string>(cmd.getValue("lr"))))
-            std::cerr << "failed to set left analog right\n";
-
-        if (cmd.hasArg("st") && !gpd->setButton(OWC::Button::KBD_START, std::get<std::string>(cmd.getValue("st"))))
-            std::cerr << "failed to set start\n";
-
-        if (cmd.hasArg("sl") && !gpd->setButton(OWC::Button::KBD_SELECT, std::get<std::string>(cmd.getValue("sl"))))
-            std::cerr << "failed to set select\n";
-
-        if (cmd.hasArg("mu") && !gpd->setButton(OWC::Button::KBD_MENU, std::get<std::string>(cmd.getValue("mu"))))
-            std::cerr << "failed to set menu\n";
-
-        if (cmd.hasArg("l1") && !gpd->setButton(OWC::Button::KBD_L1, std::get<std::string>(cmd.getValue("l1"))))
-            std::cerr << "failed to set L1\n";
-
-        if (cmd.hasArg("l2") && !gpd->setButton(OWC::Button::KBD_L2, std::get<std::string>(cmd.getValue("l2"))))
-            std::cerr << "failed to set L2\n";
-
-        if (cmd.hasArg("l3") && !gpd->setButton(OWC::Button::KBD_L3, std::get<std::string>(cmd.getValue("l3"))))
-            std::cerr << "failed to set L3\n";
-
-        if (cmd.hasArg("r1") && !gpd->setButton(OWC::Button::KBD_R1, std::get<std::string>(cmd.getValue("r1"))))
-            std::cerr << "failed to set R1\n";
-
-        if (cmd.hasArg("r2") && !gpd->setButton(OWC::Button::KBD_R2, std::get<std::string>(cmd.getValue("r2"))))
-            std::cerr << "failed to set R2\n";
-
-        if (cmd.hasArg("r3") && !gpd->setButton(OWC::Button::KBD_R3, std::get<std::string>(cmd.getValue("r3"))))
-            std::cerr << "failed to set R3\n";
-
-        if (gpd->getControllerType() == 1)
+        if (controllerType == 1) {
             writeConfigBackButtonsV1(gpd, cmd);
 
+        } else if (controllerType == 2) {
+            const std::shared_ptr<OWC::ControllerV2> gpdV2 = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd);
+
+            writeConfigBackButtonsV2(gpdV2, cmd);
+        }
+
         if (gpd->hasFeature(OWC::ControllerFeature::RumbleV1) && cmd.hasArg("rmb"))
-            gpd->setRumble(std::get<std::string>(cmd.getValue("rmb")));
+            gpd->setRumble(static_cast<OWC::RumbleMode>(std::clamp(std::get<int>(cmd.getValue("rmb")), 0, 2)));
 
         if (gpd->hasFeature(OWC::ControllerFeature::DeadZoneControlV1)) {
             if (cmd.hasArg("lc"))
@@ -366,7 +643,7 @@ namespace OWCL {
 
         if (gpd->hasFeature(OWC::ControllerFeature::ShoulderLedsV1)) {
             if (cmd.hasArg("led"))
-                gpd->setLedMode(std::get<std::string>(cmd.getValue("led")));
+                gpd->setLedMode(static_cast<OWC::LedMode>(std::clamp(std::get<int>(cmd.getValue("led")), 0, 3)));
 
             if (cmd.hasArg("ledclr")) {
                 const std::tuple<int, int, int> color = std::get<std::tuple<int, int, int>>(cmd.getValue("ledclr"));

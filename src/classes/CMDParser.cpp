@@ -23,6 +23,7 @@
 #include "CMDParser.h"
 #include "../version.h"
 #include "../extern/libOpenWinControls/src/include/HIDUsageIDMap.h"
+#include "../extern/libOpenWinControls/src/include/XinputUsageIDMap.h"
 
 namespace OWC {
     CMDParser::CMDParser(const int argc, char *argv[]) {
@@ -34,11 +35,15 @@ namespace OWC {
         std::cout << APP_NAME << " " << APP_VER_MAJOR << "." << APP_VER_MINOR << "\n\n"
             "Usage: " << APP_NAME << " command [args]\n\n"
 
+            "Some options only apply to V1 or V2, incompatible options, if provided, are ignored.\n\n"
+
             "Commands:\n\n"
             "  help\n"
             "    show help\n\n"
             "  keys\n"
-            "    print supported keys\n\n"
+            "    print supported keyboard[&mouse] mode keys\n\n"
+            "  xkeys\n"
+            "    print supported xinput mode keys\n\n"
             "  set option value [..]\n"
             "    set firmware settings\n"
             "    Example: set du w dl space [..]\n\n"
@@ -92,20 +97,76 @@ namespace OWC {
             "    Assign R2 button a key\n\n"
             "  r3 [key]\n"
             "    Assign R3 button a key\n\n"
+            "  xdu [xinput button]\n"
+            "    Reassign dpad up button\n\n"
+            "  xdd [xinput button]\n"
+            "    Reassign dpad down button\n\n"
+            "  xdl [xinput button]\n"
+            "    Reassign dpad left button\n\n"
+            "  xdr [xinput button]\n"
+            "    Reassign dpad right button\n\n"
+            "  xa [xinput button]\n"
+            "    Reassign A button button\n\n"
+            "  xb [xinput button]\n"
+            "    Reassign B button button\n\n"
+            "  xx [xinput button]\n"
+            "    Reassign X button button\n\n"
+            "  xy [xinput button]\n"
+            "    Reassign Y button button\n\n"
+            "  xlu [xinput button]\n"
+            "    Reassign left analog up button\n\n"
+            "  xld [xinput button]\n"
+            "    Reassign left analog down button\n\n"
+            "  xll [xinput button]\n"
+            "    Reassign left analog left button\n\n"
+            "  xlr [xinput button]\n"
+            "    Reassign left analog right button\n\n"
+            "  xru [xinput button]\n"
+            "    Reassign right analog up button\n\n"
+            "  xrd [xinput button]\n"
+            "    Reassign right analog down button\n\n"
+            "  xrl [xinput button]\n"
+            "    Reassign right analog left button\n\n"
+            "  xrr [xinput button]\n"
+            "    Reassign right analog right button\n\n"
+            "  xst [xinput button]\n"
+            "    Reassign start button button\n\n"
+            "  xsl [xinput button]\n"
+            "    Reassign select button button\n\n"
+            "  xmu [xinput button]\n"
+            "    Reassign menu button button\n\n"
+            "  xl1 [xinput button]\n"
+            "    Reassign L1 button button\n\n"
+            "  xl2 [xinput button]\n"
+            "    Reassign L2 button button\n\n"
+            "  xl3 [xinput button]\n"
+            "    Reassign L3 button button\n\n"
+            "  xr1 [xinput button]\n"
+            "    Reassign R1 button button\n\n"
+            "  xr2 [xinput button]\n"
+            "    Reassign R2 button button\n\n"
+            "  xr3 [xinput button]\n"
+            "    Reassign R3 button button\n\n"
             "  l4 [key1,key2,key3..]\n"
             "    Comma separated list of keys\n"
             "    Assign L4 back button\n\n"
             "  l4d [time1,time2..]\n"
             "    Comma separated list of times\n"
             "    Set L4 back button keys start time in milliseconds\n\n"
+            "  l4h [time1,time2..]\n"
+            "    Comma separated list of times\n"
+            "    Set L4 back button keys hold time in milliseconds\n\n"
             "  r4 [key1,key2,key3..]\n"
             "    Comma separated list of keys\n"
             "    Assign R4 back button\n\n"
             "  r4d [time1,time2..]\n"
             "    Comma separated list of times\n"
             "    Set R4 back button keys start time in milliseconds\n\n"
+            "  r4h [time1,time2..]\n"
+            "    Comma separated list of times\n"
+            "    Set R4 back button keys hold time in milliseconds\n\n"
             "  rmb [mode]\n"
-            "    Set vibration intensity [off, low, high]\n\n"
+            "    Set vibration intensity [0 = off, 1 = low, 2 = high]\n\n"
             "  lc [value]\n"
             "    Adjust left analog deadzone [-10, +10]\n\n"
             "  lb [value]\n"
@@ -115,7 +176,7 @@ namespace OWC {
             "  rb [value]\n"
             "    Adjust right analog boundary [-10, +10]\n\n"
             "  led [mode]\n"
-            "    Set shoulder buttons led mode [off, solid, breathe, rotate]\n\n"
+            "    Set shoulder buttons led mode [0 = off, 1 = solid, 2 = breathe, 3 = rotate]\n\n"
             "  ledclr [R:G:B]\n"
             "    Set shoulder buttons led color [0-255:0-255:0-255]\n\n"
 
@@ -124,6 +185,12 @@ namespace OWC {
             "     Support up to 4 key/time slots for back buttons macro.\n"
             "     If more keys/times are provied, they will be ignored.\n"
             "     The 4th time slot is special, it sets the whole macro start time.\n\n"
+
+            "  Controller V2 features:\n"
+            "     Support up to 32 key/time/hold slots for back buttons.\n\n"
+            /*"     Back buttons have 3 modes: single, 4-buttons, 32-slots macro.\n"
+            "     Mode is automatically updated based on the number of keys being set: 1, 2-4, 5+.\n"
+            "     Same for the active slots count.\n\n"*/
 
             "  Deadzone settings:\n"
             "     This is composed of two values, center and boundary.\n"
@@ -141,13 +208,19 @@ namespace OWC {
             std::cout << "  " << key << "\n";
     }
 
+    void CMDParser::showXKeys() const {
+        std::cout << APP_NAME << " " << APP_VER_MAJOR << "." << APP_VER_MINOR << "\n\n"
+            "Xinput mode key values:\n";
+
+        for (const auto &[code, key]: XinputUsageIDMap)
+            std::cout << "  " << key << "\n";
+    }
+
     bool CMDParser::isArg(const std::string_view arg) const {
         return arg == argV[0];
     }
 
     bool CMDParser::parseSetOptions() {
-        using namespace std::string_view_literals;
-
         if (argC < 1) {
             showHelp();
             return false;
@@ -159,7 +232,13 @@ namespace OWC {
                 isArg("lu") || isArg("ld") || isArg("ll") || isArg("lr") ||
                 isArg("st") || isArg("sl") || isArg("mu") || isArg("l1") ||
                 isArg("l2") || isArg("l3") || isArg("r1") || isArg("r2") ||
-                isArg("r3"))
+                isArg("r3") || isArg("xdu") || isArg("xdd") || isArg("xdl") ||
+                isArg("xdr") || isArg("xa") || isArg("xb") || isArg("xx") ||
+                isArg("xy") || isArg("xst") || isArg("xsl") || isArg("xmu") ||
+                isArg("xlu") || isArg("xld") || isArg("xll") || isArg("xlr") ||
+                isArg("xru") || isArg("xrd") || isArg("xrl") || isArg("xrr") ||
+                isArg("xl1") || isArg("xl2") || isArg("xl3") || isArg("xr1") ||
+                isArg("xr2") || isArg("xr3"))
             {
                 std::string key = argV[1];
 
@@ -181,7 +260,7 @@ namespace OWC {
 
                 args.emplace(argV[0], keys);
 
-            } else if (isArg("l4d") || isArg("r4d")) {
+            } else if (isArg("l4d") || isArg("l4h") || isArg("r4d") || isArg("r4h")) {
                 std::vector<int> times;
                 char *s = strtok(argV[1], ",");
 
@@ -193,24 +272,10 @@ namespace OWC {
 
                 args.emplace(argV[0], times);
 
-            } else if (isArg("lc") || isArg("lb") || isArg("rc") || isArg("rb")) {
+            } else if (isArg("lc") || isArg("lb") || isArg("rc") || isArg("rb") ||
+                        isArg("led") || isArg("rmb"))
+            {
                 args.emplace(argV[0], std::stoi(argV[1]));
-
-            } else if (isArg("rmb")) {
-                if (argV[1] != "off"sv && argV[1] != "low"sv && argV[1] != "high"sv) {
-                    std::cerr << "invalid rmb value\n";
-                    return false;
-                }
-
-                args.emplace(argV[0], argV[1]);
-
-            } else if (isArg("led")) {
-                if (argV[1] != "off"sv && argV[1] != "solid"sv && argV[1] != "breathe"sv && argV[1] != "rotate"sv) {
-                    std::cerr << "invalid led value\n";
-                    return false;
-                }
-
-                args.emplace(argV[0], argV[1]);
 
             } else if (isArg("ledclr")) {
                 int r, g, b;
@@ -237,6 +302,10 @@ namespace OWC {
 
         } else if (isArg("keys")) {
             showKeys();
+            return false;
+
+        } else if (isArg("xkeys")) {
+            showXKeys();
             return false;
 
         } else if (isArg("print")) {
