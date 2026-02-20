@@ -20,8 +20,10 @@ Multiplatform GPD WinControls replacement, command-line version.
   disrupting the correct functionality of the macro mode
 - Controller may softlock itself when entering sleep mode by the OS, no longer processing commands,
   requiring the user to manually switch mode back and forth using the physical button on device
-- Config is not written to the controller if OS enters sleep mode soon after write command is issued, wait 10-15 secs
-- Mappings may be reverted to a previous state, after device reboot/poweroff, in some unknown circumstances
+
+## Current limitations
+
+- To apply the changes permanently, switch the controller mode back and forth using the physical button on device
 
 ## Linux
 
