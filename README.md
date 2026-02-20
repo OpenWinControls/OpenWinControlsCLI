@@ -48,6 +48,9 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 Chain multiple keys by assigning an incremental start time (**l4d**/**r4d**) and a fixed hold time to each slot.
 
+To simulate a single key press, set one key slot, start time (**l4d**) to 0
+and hold time (**l4h**) to something high like **300**.
+
 ### Help
 
 ```text
