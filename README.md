@@ -44,8 +44,14 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 ## Usage
 
+**Controller V2 macros**
+
+Chain multiple keys by assigning an incremental start time (**l4d**/**r4d**) and a fixed hold time to each slot.
+
+### Help
+
 ```text
-OpenWinControlsCLI 2.0
+OpenWinControlsCLI 2.1
 
 Usage: OpenWinControlsCLI command [args]
 
@@ -269,6 +275,7 @@ Notes:
 
   Controller V2 features:
      Support up to 32 key/time/hold slots for back buttons.
+     The number of active key slots is automatically updated on write.
 
   Deadzone settings:
      This is composed of two values, center and boundary.

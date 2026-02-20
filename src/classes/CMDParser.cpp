@@ -187,10 +187,10 @@ namespace OWC {
             "     The 4th time slot is special, it sets the whole macro start time.\n\n"
 
             "  Controller V2 features:\n"
-            "     Support up to 32 key/time/hold slots for back buttons.\n\n"
+            "     Support up to 32 key/time/hold slots for back buttons.\n"
             /*"     Back buttons have 3 modes: single, 4-buttons, 32-slots macro.\n"
-            "     Mode is automatically updated based on the number of keys being set: 1, 2-4, 5+.\n"
-            "     Same for the active slots count.\n\n"*/
+            "     Mode is automatically updated based on the number of keys being set: 1, 2-4, 5+.\n"*/
+            "     The number of active key slots is automatically updated on write.\n\n"
 
             "  Deadzone settings:\n"
             "     This is composed of two values, center and boundary.\n"

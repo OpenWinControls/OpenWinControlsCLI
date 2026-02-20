@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 
-project(OpenWinControlsCLI VERSION 2.0 DESCRIPTION "Multiplatform GPD WinControls replacement (command-line)" LANGUAGES CXX)
+project(OpenWinControlsCLI VERSION 2.1 DESCRIPTION "Multiplatform GPD WinControls replacement (command-line)" LANGUAGES CXX)
 
 set(PROJECT_AUTHOR "kylon")
 set(CMAKE_CXX_STANDARD 20)

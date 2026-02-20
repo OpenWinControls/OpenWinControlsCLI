@@ -1,3 +1,7 @@
+## 2.1
+
+- Enable creation of back buttons macro with 5+ keys
+
 ## 2.0
 
 - Support win5 and mini 25
