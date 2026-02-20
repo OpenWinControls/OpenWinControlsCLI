@@ -21,7 +21,7 @@ Multiplatform GPD WinControls replacement, command-line version.
 - Controller may softlock itself when entering sleep mode by the OS, no longer processing commands,
   requiring the user to manually switch mode back and forth using the physical button on device
 
-## Current limitations
+## Current controllerV2 limitations
 
 - To apply the changes permanently, switch the controller mode back and forth using the physical button on device
 
