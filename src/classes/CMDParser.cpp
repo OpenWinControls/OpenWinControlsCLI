@@ -156,6 +156,8 @@ namespace OWC {
             "  l4h [time1,time2..]\n"
             "    Comma separated list of times\n"
             "    Set L4 back button keys hold time in milliseconds\n\n"
+            "  l4n [num]\n"
+            "    Manually override L4 macro active slots number [0, 32]\n\n"
             "  r4 [key1,key2,key3..]\n"
             "    Comma separated list of keys\n"
             "    Assign R4 back button\n\n"
@@ -165,6 +167,8 @@ namespace OWC {
             "  r4h [time1,time2..]\n"
             "    Comma separated list of times\n"
             "    Set R4 back button keys hold time in milliseconds\n\n"
+            "  r4n [num]\n"
+            "    Manually override R4 macro active slots number [0, 32]\n\n"
             "  rmb [mode]\n"
             "    Set vibration intensity [0 = off, 1 = low, 2 = high]\n\n"
             "  lc [value]\n"
@@ -182,12 +186,12 @@ namespace OWC {
 
             "Notes:\n\n"
             "  Controller V1 features:\n"
-            "     Support up to 4 key/time slots for back buttons macro.\n"
+            "     Supports up to 4 key/time slots for back buttons macro.\n"
             "     If more keys/times are provied, they will be ignored.\n"
             "     The 4th time slot is special, it sets the whole macro start time.\n\n"
 
             "  Controller V2 features:\n"
-            "     Support up to 32 key/time/hold slots for back buttons.\n"
+            "     Supports up to 32 key/time/hold slots for back buttons.\n"
             /*"     Back buttons have 3 modes: single, 4-buttons, 32-slots macro.\n"
             "     Mode is automatically updated based on the number of keys being set: 1, 2-4, 5+.\n"*/
             "     The number of active key slots is automatically updated on write.\n\n"
@@ -273,7 +277,7 @@ namespace OWC {
                 args.emplace(argV[0], times);
 
             } else if (isArg("lc") || isArg("lb") || isArg("rc") || isArg("rb") ||
-                        isArg("led") || isArg("rmb"))
+                       isArg("led") || isArg("rmb") || isArg("l4n") || isArg("r4n"))
             {
                 args.emplace(argV[0], std::stoi(argV[1]));
 

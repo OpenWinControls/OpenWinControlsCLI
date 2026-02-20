@@ -1,6 +1,10 @@
+## 2.2
+
+- ControllerV2: allow to override back buttons macro active slots number
+
 ## 2.1
 
-- Enable creation of back buttons macro with 5+ keys
+- ControllerV2: enable creation of back buttons macro with 5+ keys
 
 ## 2.0
 

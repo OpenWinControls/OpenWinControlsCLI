@@ -334,9 +334,9 @@ namespace OWCL {
                     btn << "_K" << i << "_HOLD_TIME: " << gpd->getBackButtonHoldTime(num, i) << "\n";
             }
 
-            /*ofs << btn << "_MODE: " << static_cast<int>(gpd->getBackButtonMode(num)) << "\n" <<
-                btn << "_MACRO_TYPE: " << static_cast<int>(gpd->getBackButtonMacroType(num)) << "\n" <<
-                btn << "_ACTIVE_SLOTS: " << gpd->getBackButtonActiveSlots(num) << "\n";*/
+            ofs << /*btn << "_MODE: " << static_cast<int>(gpd->getBackButtonMode(num)) << "\n" <<
+                btn << "_MACRO_TYPE: " << static_cast<int>(gpd->getBackButtonMacroType(num)) << "\n" <<*/
+                btn << "_ACTIVE_SLOTS: " << gpd->getBackButtonActiveSlots(num) << "\n";
 
             ++num;
         }
@@ -412,8 +412,8 @@ namespace OWCL {
 
         for (const std::string_view btn: {"L4", "R4"}) {
             /*const std::string mode = std::format("{}_MODE", btn);
-            const std::string type = std::format("{}_MACRO_TYPE", btn);
-            const std::string activeC = std::format("{}_ACTIVE_SLOTS", btn);*/
+            const std::string type = std::format("{}_MACRO_TYPE", btn);*/
+            const std::string activeC = std::format("{}_ACTIVE_SLOTS", btn);
 
             for (int i=1; i<=32; ++i) {
                 const std::string key = std::format("{}_K{}", btn, i);
@@ -437,10 +437,10 @@ namespace OWCL {
                 gpd->setBackButtonMode(num, static_cast<OWC::BackButtonMode>(std::clamp(yaml[mode].as<int>(), 0, 2)));
 
             if (yaml[type])
-                gpd->setBackButtonMacroType(num, static_cast<OWC::BackButtonMacroType>(std::clamp(yaml[type].as<int>(), 0, 1)));
+                gpd->setBackButtonMacroType(num, static_cast<OWC::BackButtonMacroType>(std::clamp(yaml[type].as<int>(), 0, 1)));*/
 
             if (yaml[activeC])
-                gpd->setBackButtonActiveSlots(num, yaml[activeC].as<int>());*/
+                gpd->setBackButtonActiveSlots(num, std::clamp(0, 32, yaml[activeC].as<int>()));
 
             ++num;
         }
@@ -567,7 +567,7 @@ namespace OWCL {
             else
                 gpd->setBackButtonMode(num, OWC::BackButtonMode::Macro);*/
 
-            gpd->setBackButtonActiveSlots(num, std::clamp(slotsC, 4, 32));
+            gpd->setBackButtonActiveSlots(num, slotsC);
             ++num;
         }
 
@@ -598,6 +598,12 @@ namespace OWCL {
 
             ++num;
         }
+
+        if (cmd.hasArg("l4n"))
+            gpd->setBackButtonActiveSlots(1, std::clamp(std::get<int>(cmd.getValue("l4n")), 0, 32));
+
+        if (cmd.hasArg("r4n"))
+            gpd->setBackButtonActiveSlots(2, std::clamp(std::get<int>(cmd.getValue("r4n")), 0, 32));
     }
 
     int writeConfig(const std::shared_ptr<OWC::Controller> &gpd, const OWC::CMDParser &cmd) {

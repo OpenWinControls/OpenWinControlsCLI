@@ -51,7 +51,7 @@ Chain multiple keys by assigning an incremental start time (**l4d**/**r4d**) and
 ### Help
 
 ```text
-OpenWinControlsCLI 2.1
+OpenWinControlsCLI 2.2
 
 Usage: OpenWinControlsCLI command [args]
 
@@ -233,6 +233,9 @@ Options:
     Comma separated list of times
     Set L4 back button keys hold time in milliseconds
 
+  l4n [num]
+    Manually override L4 macro active slots number [0, 32]
+
   r4 [key1,key2,key3..]
     Comma separated list of keys
     Assign R4 back button
@@ -244,6 +247,9 @@ Options:
   r4h [time1,time2..]
     Comma separated list of times
     Set R4 back button keys hold time in milliseconds
+
+  r4n [num]
+    Manually override R4 macro active slots number [0, 32]
 
   rmb [mode]
     Set vibration intensity [0 = off, 1 = low, 2 = high]
@@ -269,12 +275,12 @@ Options:
 Notes:
 
   Controller V1 features:
-     Support up to 4 key/time slots for back buttons macro.
+     Supports up to 4 key/time slots for back buttons macro.
      If more keys/times are provied, they will be ignored.
      The 4th time slot is special, it sets the whole macro start time.
 
   Controller V2 features:
-     Support up to 32 key/time/hold slots for back buttons.
+     Supports up to 32 key/time/hold slots for back buttons.
      The number of active key slots is automatically updated on write.
 
   Deadzone settings:
