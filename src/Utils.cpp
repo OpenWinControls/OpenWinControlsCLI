@@ -549,11 +549,16 @@ namespace OWCL {
                 continue;
 
             const std::vector<std::string> keys = std::get<std::vector<std::string>>(cmd.getValue(btn.data()));
+            bool stopCount = false;
             int slotsC = 0;
 
             for (int i=0,l=keys.size(); i<l && i<32; ++i) {
-                if (keys[i] != "UNSET")
-                    ++slotsC;
+                if (!stopCount) {
+                    if (keys[i] == "UNSET")
+                        stopCount = true;
+                    else
+                        ++slotsC;
+                }
 
                 if (!gpd->setBackButton(num, i+1, keys[i]))
                     std::cerr << "failed to set " << btn << " slot " << (i + 1) << "\n";
