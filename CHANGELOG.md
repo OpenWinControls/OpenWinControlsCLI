@@ -1,3 +1,7 @@
+## Future
+
+- ControllerV2: Fix automatic active slots count for back buttons
+
 ## 2.2
 
 - ControllerV2: allow to override back buttons macro active slots number
