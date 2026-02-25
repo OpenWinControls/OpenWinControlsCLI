@@ -247,7 +247,6 @@ namespace OWC {
                 std::string key = argV[1];
 
                 std::erase_if(key, [](const char c)->bool { return std::isspace(c); });
-                std::transform(key.begin(), key.end(), key.begin(), ::toupper);
                 args.emplace(argV[0], key);
 
             } else if (isArg("l4") || isArg("r4")) {
@@ -255,10 +254,7 @@ namespace OWC {
                 char *s = strtok(argV[1], ",");
 
                 while (s != nullptr) {
-                    std::string key = s;
-
-                    std::transform(key.begin(), key.end(), key.begin(), ::toupper);
-                    keys.emplace_back(key);
+                    keys.emplace_back(s);
                     s = strtok(nullptr, ",");
                 }
 
