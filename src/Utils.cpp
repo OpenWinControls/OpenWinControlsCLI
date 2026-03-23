@@ -564,14 +564,6 @@ namespace OWCL {
                     std::cerr << "failed to set " << btn << " slot " << (i + 1) << "\n";
             }
 
-            /*
-            if (keys.size() == 1)
-                gpd->setBackButtonMode(num, OWC::BackButtonMode::Single);
-            else if (keys.size() <= 4)
-                gpd->setBackButtonMode(num, OWC::BackButtonMode::Four);
-            else
-                gpd->setBackButtonMode(num, OWC::BackButtonMode::Macro);*/
-
             gpd->setBackButtonActiveSlots(num, slotsC);
             ++num;
         }

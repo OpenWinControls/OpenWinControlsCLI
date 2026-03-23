@@ -192,8 +192,6 @@ namespace OWC {
 
             "  Controller V2 features:\n"
             "     Supports up to 32 key/time/hold slots for back buttons.\n"
-            /*"     Back buttons have 3 modes: single, 4-buttons, 32-slots macro.\n"
-            "     Mode is automatically updated based on the number of keys being set: 1, 2-4, 5+.\n"*/
             "     The number of active key slots is automatically updated on write.\n\n"
 
             "  Deadzone settings:\n"
