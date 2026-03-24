@@ -1,3 +1,7 @@
+## 2.5
+
+- Do not crash when importing malformed yamls
+
 ## 2.4
 
 - Update libOpenWinControls

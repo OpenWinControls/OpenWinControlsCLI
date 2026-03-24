@@ -26,6 +26,7 @@
 #include "extern/libOpenWinControls/src/include/ControllerFeature.h"
 #include "extern/libOpenWinControls/src/controller/ControllerV1.h"
 #include "extern/libOpenWinControls/src/controller/ControllerV2.h"
+#include "extern/yaml-cpp/include/yaml-cpp/yaml.h"
 
 static constexpr char win3[] = "G1618-03";
 static constexpr char win4[] = "G1618-04";
@@ -171,16 +172,26 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    if (cmdParser.hasArg("print"))
+    if (cmdParser.hasArg("print")) {
         OWCL::printCurrentSettings(gpd);
-    else if (cmdParser.hasArg("reset"))
+
+    } else if (cmdParser.hasArg("reset")) {
         return OWCL::resetConfig(gpd);
-    else if (cmdParser.hasArg("export"))
-       return OWCL::exportToYaml(gpd, std::get<std::string>(cmdParser.getValue("export")));
-    else if (cmdParser.hasArg("import"))
-        return OWCL::importFromYaml(gpd, std::get<std::string>(cmdParser.getValue("import")));
-    else if (cmdParser.hasArg("set"))
+
+    } else if (cmdParser.hasArg("export")) {
+        return OWCL::exportToYaml(gpd, std::get<std::string>(cmdParser.getValue("export")));
+
+    } else if (cmdParser.hasArg("import")) {
+        try {
+            return OWCL::importFromYaml(gpd, std::get<std::string>(cmdParser.getValue("import")));
+
+        } catch (const YAML::Exception &yex) {
+            std::cerr << "failed to parse yaml: " << yex.msg << "\n";
+            return 1;
+        }
+    } else if (cmdParser.hasArg("set")) {
         return OWCL::writeConfig(gpd, cmdParser);
+    }
 
     return 0;
 }
