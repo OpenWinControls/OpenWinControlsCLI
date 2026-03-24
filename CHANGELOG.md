@@ -1,3 +1,7 @@
+## 2.4
+
+- Update libOpenWinControls
+
 ## 2.3
 
 - ControllerV2: Fix automatic active slots count for back buttons
