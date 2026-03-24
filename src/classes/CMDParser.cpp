@@ -53,6 +53,8 @@ namespace OWC {
             "    apply mapping from file\n\n"
             "  print\n"
             "    Print current firmware settings\n\n"
+            "  reset\n"
+            "    Reset controller memory to a known working state\n\n"
 
             "Options:\n\n"
             "  du [key]\n"
@@ -306,7 +308,7 @@ namespace OWC {
             showXKeys();
             return false;
 
-        } else if (isArg("print")) {
+        } else if (isArg("print") || isArg("reset")) {
             args.emplace(argV[0], 0);
             return true;
 

@@ -173,6 +173,8 @@ int main(int argc, char *argv[]) {
 
     if (cmdParser.hasArg("print"))
         OWCL::printCurrentSettings(gpd);
+    else if (cmdParser.hasArg("reset"))
+        return OWCL::resetConfig(gpd);
     else if (cmdParser.hasArg("export"))
        return OWCL::exportToYaml(gpd, std::get<std::string>(cmdParser.getValue("export")));
     else if (cmdParser.hasArg("import"))

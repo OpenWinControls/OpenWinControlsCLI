@@ -662,4 +662,13 @@ namespace OWCL {
 
         return 0;
     }
+
+    int resetConfig(const std::shared_ptr<OWC::Controller> &gpd) {
+        if (!gpd->resetConfig()) {
+            std::cerr << "failed to reset controller memory\n";
+            return 1;
+        }
+
+        return 0;
+    }
 }

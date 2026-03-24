@@ -1,6 +1,7 @@
-## Future
+## 2.3
 
 - ControllerV2: Fix automatic active slots count for back buttons
+- Add reset option
 
 ## 2.2
 

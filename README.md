@@ -51,7 +51,7 @@ and hold time (**l4h**) to something high like **300**.
 ### Help
 
 ```text
-OpenWinControlsCLI 2.2
+OpenWinControlsCLI 2.3
 
 Usage: OpenWinControlsCLI command [args]
 
@@ -80,6 +80,9 @@ Commands:
 
   print
     Print current firmware settings
+    
+  reset
+    Reset controller memory to a known working state
 
 Options:
 
