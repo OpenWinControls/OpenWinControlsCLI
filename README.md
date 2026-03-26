@@ -43,15 +43,15 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 **Controller V2 macros**
 
-Chain multiple keys by assigning an incremental start time (**l4d**/**r4d**) and a fixed hold time to each slot.
+Chain multiple keys by assigning an incremental start time and a fixed hold time to each slot.
 
-To simulate a single key press, set one key slot, start time (**l4d**) to 0
-and hold time (**l4h**) to something high like **300**.
+To simulate a single key press, set one key slot, start time to 0
+and hold time to something high like **300**.
 
 ### Help
 
 ```text
-OpenWinControlsCLI 2.3
+OpenWinControlsCLI 2.6
 
 Usage: OpenWinControlsCLI command [args]
 
@@ -253,6 +253,36 @@ Options:
 
   r4n [num]
     Manually override R4 macro active slots number [0, 32]
+
+  l5 [key1,key2,key3..]
+    Comma separated list of keys
+    Assign L5 back button
+
+  l5d [time1,time2..]
+    Comma separated list of times
+    Set L5 back button keys start time in milliseconds
+
+  l5h [time1,time2..]
+    Comma separated list of times
+    Set L5 back button keys hold time in milliseconds
+
+  l5n [num]
+    Manually override L5 macro active slots number [0, 32]
+
+  r5 [key1,key2,key3..]
+    Comma separated list of keys
+    Assign R5 back button
+
+  r5d [time1,time2..]
+    Comma separated list of times
+    Set R5 back button keys start time in milliseconds
+
+  r5h [time1,time2..]
+    Comma separated list of times
+    Set R5 back button keys hold time in milliseconds
+
+  r5n [num]
+    Manually override R5 macro active slots number [0, 32]
 
   rmb [mode]
     Set vibration intensity [0 = off, 1 = low, 2 = high]
