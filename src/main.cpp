@@ -98,7 +98,7 @@ static std::shared_ptr<OWC::Controller> getDevice(const std::string &product) {
     //else if (product == win3)
     //    device = std::make_shared<OWC::ControllerV1>();
     else if (product == win5)
-        device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1);
+        device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1 | OWC::ControllerFeature::BackButton4);
     else if (product == mini25)
         device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::DeadZoneControlV1 | OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1);
     else

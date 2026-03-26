@@ -1,3 +1,9 @@
+## 2.6
+
+- Fix back buttons not being set after L4
+- Support controller v2 L5 and R5 buttons (win5 only implements R5 as the controller mode switch button, mini 25 has none)
+- Fix crash when importing from yaml due to inverted args in function call
+
 ## 2.5
 
 - Do not crash when importing malformed yamls

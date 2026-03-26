@@ -171,6 +171,28 @@ namespace OWC {
             "    Set R4 back button keys hold time in milliseconds\n\n"
             "  r4n [num]\n"
             "    Manually override R4 macro active slots number [0, 32]\n\n"
+            "  l5 [key1,key2,key3..]\n"
+            "    Comma separated list of keys\n"
+            "    Assign L5 back button\n\n"
+            "  l5d [time1,time2..]\n"
+            "    Comma separated list of times\n"
+            "    Set L5 back button keys start time in milliseconds\n\n"
+            "  l5h [time1,time2..]\n"
+            "    Comma separated list of times\n"
+            "    Set L5 back button keys hold time in milliseconds\n\n"
+            "  l5n [num]\n"
+            "    Manually override L5 macro active slots number [0, 32]\n\n"
+            "  r5 [key1,key2,key3..]\n"
+            "    Comma separated list of keys\n"
+            "    Assign R5 back button\n\n"
+            "  r5d [time1,time2..]\n"
+            "    Comma separated list of times\n"
+            "    Set R5 back button keys start time in milliseconds\n\n"
+            "  r5h [time1,time2..]\n"
+            "    Comma separated list of times\n"
+            "    Set R5 back button keys hold time in milliseconds\n\n"
+            "  r5n [num]\n"
+            "    Manually override R5 macro active slots number [0, 32]\n\n"
             "  rmb [mode]\n"
             "    Set vibration intensity [0 = off, 1 = low, 2 = high]\n\n"
             "  lc [value]\n"
@@ -249,7 +271,7 @@ namespace OWC {
                 std::erase_if(key, [](const char c)->bool { return std::isspace(c); });
                 args.emplace(argV[0], key);
 
-            } else if (isArg("l4") || isArg("r4")) {
+            } else if (isArg("l4") || isArg("r4") || isArg("l5") || isArg("r5")) {
                 std::vector<std::string> keys;
                 char *s = strtok(argV[1], ",");
 
@@ -260,7 +282,9 @@ namespace OWC {
 
                 args.emplace(argV[0], keys);
 
-            } else if (isArg("l4d") || isArg("l4h") || isArg("r4d") || isArg("r4h")) {
+            } else if (isArg("l4d") || isArg("l4h") || isArg("r4d") || isArg("r4h") ||
+                       isArg("l5d") || isArg("l5h") || isArg("r5d") || isArg("r5h"))
+            {
                 std::vector<int> times;
                 char *s = strtok(argV[1], ",");
 
@@ -273,7 +297,8 @@ namespace OWC {
                 args.emplace(argV[0], times);
 
             } else if (isArg("lc") || isArg("lb") || isArg("rc") || isArg("rb") ||
-                       isArg("led") || isArg("rmb") || isArg("l4n") || isArg("r4n"))
+                       isArg("led") || isArg("rmb") || isArg("l4n") || isArg("r4n") ||
+                       isArg("l5n") || isArg("r5n"))
             {
                 args.emplace(argV[0], std::stoi(argV[1]));
 
