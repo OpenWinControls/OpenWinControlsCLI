@@ -117,23 +117,23 @@ static bool isCompatible(const std::string &product, const std::shared_ptr<OWC::
 
     } else*/ if (product == win4) {
         version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        compCheck = version.first >= 4 && version.second >= 7;
+        compCheck = version.first >= 0x4 && version.second >= 0x7;
 
-    } else if (product == mini23 || product == mini24) {
+    } else if (product == mini24) {
         version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        compCheck = version.first >= 5 && version.second >= 3;
+        compCheck = version.first >= 0x5 && version.second >= 0x3;
 
     } else if (product == max2_22 || product == max2_25) {
         version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        compCheck = version.first >= 1 && version.second >= 23;
+        compCheck = version.first >= 1 && version.second >= 0x23;
 
     } else if (product == win5) {
         version = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd)->getVersion();
-        compCheck = version.first >= 1 && version.second >= 8;
+        compCheck = version.first >= 1 && version.second >= 0x8;
 
-    } else if (product == mini25) {
+    } else if (product == mini25 || product == mini25L) {
         version = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd)->getVersion();
-        compCheck = version.first >= 1 && version.second >= 22;
+        compCheck = version.first >= 1 && version.second >= 0x22;
     }
 
     if (!compCheck)
