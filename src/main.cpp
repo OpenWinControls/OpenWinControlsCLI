@@ -30,9 +30,9 @@
 
 static constexpr char win3[] = "G1618-03";
 static constexpr char win4[] = "G1618-04";
-static constexpr char mini23[] = "G1617-01";
-static constexpr char mini24[] = "G1617-02";
-static constexpr char mini25[] = "G1617-02-L";
+static constexpr char mini24[] = "G1617-01";
+static constexpr char mini25[] = "G1617-02";
+static constexpr char mini25L[] = "G1617-02-L";
 static constexpr char max2_22[] = "G1619-04";
 static constexpr char max2_25[] = "G1619-05";
 static constexpr char win5[] = "G1618-05";
@@ -93,13 +93,13 @@ static std::shared_ptr<OWC::Controller> getDevice(const std::string &product) {
 
     if (product == win4)
         device = std::make_shared<OWC::ControllerV1>(OWC::ControllerFeature::DeadZoneControlV1 | OWC::ControllerFeature::ShoulderLedsV1 | OWC::ControllerFeature::RumbleV1);
-    else if (product == mini23 || product == mini24 || product == max2_22 || product == max2_25)
+    else if (product == mini24 || product == max2_22 || product == max2_25)
         device = std::make_shared<OWC::ControllerV1>(OWC::ControllerFeature::DeadZoneControlV1 | OWC::ControllerFeature::RumbleV1);
     //else if (product == win3)
     //    device = std::make_shared<OWC::ControllerV1>();
     else if (product == win5)
         device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1 | OWC::ControllerFeature::BackButton4);
-    else if (product == mini25)
+    else if (product == mini25 || product == mini25L)
         device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::DeadZoneControlV1 | OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1);
     else
         std::cerr << "unknown device: " << product << "\n";
