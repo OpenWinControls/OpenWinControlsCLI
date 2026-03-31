@@ -1,3 +1,9 @@
+## 2.7
+
+- Fix initialization for some mini 25 models
+- Fix controller version checks (nothing affected by this, but was possible in future)
+- Fix displayed version string in some cases
+
 ## 2.6
 
 - Fix back buttons not being set after L4
