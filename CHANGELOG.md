@@ -1,3 +1,7 @@
+## future
+
+- Fix print showing all values as hex
+
 ## 2.7
 
 - Fix initialization for some mini 25 models
