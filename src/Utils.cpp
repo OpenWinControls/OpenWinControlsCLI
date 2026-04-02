@@ -145,15 +145,15 @@ namespace OWCL {
         const auto [kmaj, kmin] = gpd->getKVersion();
 
         std::cout << "=== Controller V1 Info ===\n\n"
-            "Xinput Version:\t\t" << std::hex << xmaj << "." << std::hex << xmin << "\n" <<
-            "Keyboard&Mouse Version:\t" << std::hex << kmaj << "." << std::hex << kmin << "\n";
+            "Xinput Version:\t\t" << std::hex << xmaj << "." << xmin << "\n" <<
+            "Keyboard&Mouse Version:\t" << kmaj << "." << kmin << std::dec << "\n";
     }
 
     static void printControllerInfoV2(const std::shared_ptr<OWC::ControllerV2> &gpd) {
         const auto [major, minor] = gpd->getVersion();
 
         std::cout << "=== Controller V2 Info ===\n\n"
-            "Version:\t\t" << std::hex << major << "." << std::hex << minor << "\n"
+            "Version:\t\t" << std::hex << major << "." << minor << std::dec << "\n"
             "Emulation Mode:\t\t" << OWC::emulationModeToString(gpd->getEmulationMode()) << "\n";
     }
 
