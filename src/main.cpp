@@ -164,11 +164,15 @@ int main(int argc, char *argv[]) {
         std::cerr << "device initialization failed\n";
         return 1;
 
-    } else if (!gpd->readConfig()) {
-        std::cerr << "failed to read firmware config\n";
+    } else if (!gpd->readVersion()) {
+        std::cerr << "failed to read firmware version\n";
         return 1;
 
     } else if (!isCompatible(product, gpd)) {
+        return 1;
+
+    } else if (!gpd->readConfig()) {
+        std::cerr << "failed to read firmware config\n";
         return 1;
     }
 
