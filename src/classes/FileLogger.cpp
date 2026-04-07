@@ -23,11 +23,12 @@
 namespace OWC {
     FileLogger::~FileLogger() {
         logF.close();
+        delete instance;
     }
 
-    std::shared_ptr<FileLogger> FileLogger::getInstance() {
+    FileLogger *FileLogger::getInstance() {
         if (!instance)
-            instance.reset(new FileLogger);
+            instance = new FileLogger();
 
         return instance;
     }
@@ -41,7 +42,7 @@ namespace OWC {
         if (!logF.is_open())
             return false;
 
-        logF << APP_NAME " logs - " << std::ctime(&time) << "\n\n";
+        logF << APP_NAME " logs - " << std::ctime(&time) << "\n";
         return true;
     }
 

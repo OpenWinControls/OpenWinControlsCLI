@@ -17,14 +17,13 @@
  */
 #pragma once
 
-#include <memory>
 #include <fstream>
 #include <source_location>
 
 namespace OWC {
     class FileLogger final {
     private:
-        static inline std::shared_ptr<FileLogger> instance;
+        static inline FileLogger *instance = nullptr;
         std::wofstream logF;
 
         FileLogger() = default;
@@ -34,7 +33,7 @@ namespace OWC {
 
         ~FileLogger();
 
-        static std::shared_ptr<FileLogger> getInstance();
+        static FileLogger *getInstance();
         [[nodiscard]] bool init();
         void write(const std::wstring &msg, std::source_location loc = std::source_location::current());
         void writeExt(const std::wstring &msg);

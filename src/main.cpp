@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
 
     const std::string product = getProduct();
     const std::shared_ptr<OWC::Controller> gpd = getDevice(product);
-    const std::shared_ptr<OWC::FileLogger> logger = OWC::FileLogger::getInstance();
+    OWC::FileLogger *logger = OWC::FileLogger::getInstance();
 
     if (!gpd)
         return 1;
@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
     if (!logger->init())
         std::cerr << "failed to init log file\n";
     else
-        gpd->enableLogging([&logger](const std::wstring &msg) { logger->writeExt(msg); });
+        gpd->enableLogging([logger](const std::wstring &msg) { logger->writeExt(msg); });
 
     if (!gpd->init()) {
         std::cerr << "device initialization failed\n";
