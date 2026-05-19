@@ -1,6 +1,7 @@
 ## future
 
 - Fix print showing all values as hex
+- Update modules
 
 ## 2.7
 
