@@ -509,6 +509,12 @@ namespace OWCL {
             return 1;
         }
 
+        // commit RAM->flash so the mapping survives a controller reset / reboot
+        std::cout << "config applied, committing to controller flash (takes ~12s) ...\n";
+
+        if (!gpd->flushConfig())
+            std::cerr << "warning: config applied but flush-to-flash failed (not permanent)\n";
+
         std::cout << "applied config from " << fileName << "\n";
         return 0;
     }
@@ -661,6 +667,12 @@ namespace OWCL {
             std::cerr << "failed to write controller\n";
             return 1;
         }
+
+        // commit RAM->flash so the mapping survives a controller reset / reboot
+        std::cout << "config applied, committing to controller flash (takes ~12s) ...\n";
+
+        if (!gpd->flushConfig())
+            std::cerr << "warning: config applied but flush-to-flash failed (not permanent)\n";
 
         return 0;
     }
