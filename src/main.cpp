@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 
     } else if (cmdParser.hasArg("import")) {
         try {
-            return OWCL::importFromYaml(gpd, std::get<std::string>(cmdParser.getValue("import")));
+            return OWCL::importFromYaml(gpd, std::get<std::string>(cmdParser.getValue("import")), cmdParser.hasArg("noflash"));
 
         } catch (const YAML::Exception &yex) {
             std::cerr << "failed to parse yaml: " << yex.msg << "\n";

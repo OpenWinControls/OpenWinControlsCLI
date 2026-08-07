@@ -25,7 +25,7 @@
 namespace OWCL {
     void printCurrentSettings(const std::shared_ptr<OWC::Controller> &gpd);
     [[nodiscard]] int exportToYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName);
-    [[nodiscard]] int importFromYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName);
+    [[nodiscard]] int importFromYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName, bool noflash);
     [[nodiscard]] int writeConfig(const std::shared_ptr<OWC::Controller> &gpd, const OWC::CMDParser &cmd);
     [[nodiscard]] int resetConfig(const std::shared_ptr<OWC::Controller> &gpd);
 }

@@ -449,7 +449,7 @@ namespace OWCL {
         }
     }
 
-    int importFromYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName) {
+    int importFromYaml(const std::shared_ptr<OWC::Controller> &gpd, const std::string &fileName, const bool noflash) {
         const int controllerType = gpd->getControllerType();
         const YAML::Node yaml = YAML::LoadFile(fileName);
 
@@ -503,7 +503,7 @@ namespace OWCL {
             importBackButtonsV2Yaml(gpdV2, yaml);
         }
 
-        if (!gpd->writeConfig()) {
+        if (!(noflash ? gpd->writeConfigMem() : gpd->writeConfig())) {
             std::cerr << "failed to write controller\n";
             return 1;
         }
