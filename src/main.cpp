@@ -109,37 +109,27 @@ static std::shared_ptr<OWC::Controller> getDevice(const std::string &product) {
 
 [[nodiscard]]
 static bool isCompatible(const std::string &product, const std::shared_ptr<OWC::Controller> &gpd) {
-    std::pair<int, int> version = {0, 0};
-    bool compCheck = false;
+    const auto [major, minor] = gpd->getKVersion();
+    bool isSupported = false;
 
-    /*if (product == win3) {
+    /*if (product == win3)
         return true;
+    else*/
+    if (product == win4)
+        isSupported = major >= 0x4 && minor >= 0x7;
+    else if (product == mini24)
+        isSupported = major >= 0x5 && minor >= 0x3;
+    else if (product == max2_22 || product == max2_25)
+        isSupported = major >= 1 && minor >= 0x23;
+    else if (product == win5)
+        isSupported = major >= 1 && minor >= 0x8;
+    else if (product == mini25 || product == mini25L)
+        isSupported = major >= 1 && minor >= 0x22;
 
-    } else*/ if (product == win4) {
-        version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        compCheck = version.first >= 0x4 && version.second >= 0x7;
+    if (!isSupported)
+        std::cout << "version " << major << "." << minor << " is not supported, update your firmware.\n";
 
-    } else if (product == mini24) {
-        version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        compCheck = version.first >= 0x5 && version.second >= 0x3;
-
-    } else if (product == max2_22 || product == max2_25) {
-        version = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd)->getKVersion();
-        compCheck = version.first >= 1 && version.second >= 0x23;
-
-    } else if (product == win5) {
-        version = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd)->getVersion();
-        compCheck = version.first >= 1 && version.second >= 0x8;
-
-    } else if (product == mini25 || product == mini25L) {
-        version = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd)->getVersion();
-        compCheck = version.first >= 1 && version.second >= 0x22;
-    }
-
-    if (!compCheck)
-        std::cout << "version " << version.first << "." << version.second << " is not supported, please update.\n";
-
-    return compCheck;
+    return isSupported;
 }
 
 int main(int argc, char *argv[]) {

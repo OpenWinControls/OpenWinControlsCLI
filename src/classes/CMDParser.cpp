@@ -56,6 +56,13 @@ namespace OWC {
             "  reset\n"
             "    Reset controller memory to a known working state\n\n"
 
+            "Command variants:\n\n"
+            "  mset option value [..]\n"
+            "  mimport file_name.yaml\n"
+            "    Write configuration to controller temporary memory\n"
+            "    Changes are lost after sleep/reboot/shutdown, this is useful to save some writes\n"
+            "    On protocols where temp memory is not supported, these variants will behave the same as the standard form\n\n"
+
             "Options:\n\n"
             "  du [key]\n"
             "    Assign dpad up a key\n\n"
@@ -215,6 +222,7 @@ namespace OWC {
             "     The 4th time slot is special, it sets the whole macro start time.\n\n"
 
             "  Controller V2 features:\n"
+            "     Supports writing configuration to a temporary memory (see command variants).\n"
             "     Supports up to 32 key/time/hold slots for back buttons.\n"
             "     The number of active key slots is automatically updated on write.\n\n"
 
@@ -337,12 +345,25 @@ namespace OWC {
             args.emplace(argV[0], 0);
             return true;
 
-        } else if (isArg("export") || isArg("import")) {
-            args.emplace(argV[0], argV[1]);
+        } else if (isArg("export") || isArg("import") || isArg("mimport")) {
+            char arg[10] = {0};
+
+            if (argV[0][0] == 'm') {
+                args.emplace("noflash", 0);
+                std::snprintf(arg, strlen(argV[0]) - sizeof(char), "%s", argV[0] + sizeof(char));
+
+            } else {
+                std::snprintf(arg, strlen(argV[0]), "%s", argV[0]);
+            }
+
+            args.emplace(arg, argV[1]);
             return true;
 
-        } else if (isArg("set")) {
-            args.emplace(argV[0], 0);
+        } else if (isArg("set") || isArg("mset")) {
+            if (argV[0][0] == 'm')
+                args.emplace("noflash", 0);
+
+            args.emplace("set", 0);
             --argC;
             ++argV;
             return parseSetOptions();

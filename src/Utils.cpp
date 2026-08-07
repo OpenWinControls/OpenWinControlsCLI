@@ -140,21 +140,20 @@ namespace OWCL {
         };
     }
 
-    static void printControllerInfoV1(const std::shared_ptr<OWC::ControllerV1> &gpd) {
+    static void printControllerInfo(const std::shared_ptr<OWC::Controller> &gpd) {
         const auto [xmaj, xmin] = gpd->getXVersion();
         const auto [kmaj, kmin] = gpd->getKVersion();
+        const int type = gpd->getControllerType();
 
-        std::cout << "=== Controller V1 Info ===\n\n"
+        std::cout << "=== Controller V" << type << " Info ===\n\n"
             "Xinput Version:\t\t" << std::hex << xmaj << "." << xmin << "\n" <<
             "Keyboard&Mouse Version:\t" << kmaj << "." << kmin << std::dec << "\n";
-    }
 
-    static void printControllerInfoV2(const std::shared_ptr<OWC::ControllerV2> &gpd) {
-        const auto [major, minor] = gpd->getVersion();
+        if (type == 2) {
+            const std::shared_ptr<OWC::ControllerV2> gpdv2 = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd);
 
-        std::cout << "=== Controller V2 Info ===\n\n"
-            "Version:\t\t" << std::hex << major << "." << minor << std::dec << "\n"
-            "Emulation Mode:\t\t" << OWC::emulationModeToString(gpd->getEmulationMode()) << "\n";
+            std::cout << "Emulation Mode:\t\t" << OWC::emulationModeToString(gpdv2->getEmulationMode()) << "\n";
+        }
     }
 
     static void printKeyboardMouseMapping(const std::shared_ptr<OWC::Controller> &gpd) {
@@ -293,17 +292,17 @@ namespace OWCL {
     void printCurrentSettings(const std::shared_ptr<OWC::Controller> &gpd) {
         const int controllerType = gpd->getControllerType();
 
+        printControllerInfo(gpd);
+
         if (controllerType == 1) {
             const std::shared_ptr<OWC::ControllerV1> gpdV1 = std::dynamic_pointer_cast<OWC::ControllerV1>(gpd);
 
-            printControllerInfoV1(gpdV1);
             printKeyboardMouseMapping(gpd);
             printBackButtonsV1(gpd);
 
         } else if (controllerType == 2) {
             const std::shared_ptr<OWC::ControllerV2> gpdV2 = std::dynamic_pointer_cast<OWC::ControllerV2>(gpd);
 
-            printControllerInfoV2(gpdV2);
             printKeyboardMouseMapping(gpd);
             printXinputMapping(gpd);
             printBackButtonsV2(gpdV2);
@@ -657,7 +656,7 @@ namespace OWCL {
             }
         }
 
-        if (!gpd->writeConfig()) {
+        if (!(cmd.hasArg("noflash") ? gpd->writeConfigMem() : gpd->writeConfig())) {
             std::cerr << "failed to write controller\n";
             return 1;
         }
