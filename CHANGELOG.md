@@ -1,6 +1,9 @@
-## future
+## 2.8
 
+- Update to latest libOpenWinControls (controller flash support for v2)
+- Add arg variants for set and import (mset, mimport) to only write to temp memory (v2 only)
 - Fix print showing all values as hex
+- Code clean up
 - Update modules
 
 ## 2.7
