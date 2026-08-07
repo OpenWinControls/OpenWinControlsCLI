@@ -12,13 +12,17 @@ Multiplatform GPD WinControls replacement, command-line version.
 
 ## Known device firmware bugs (must be fixed by GPD)
 
+### All
+
+- Mouse codes (left/right/middle click, fast cursor), when assigned to **back buttons**,
+  don't work until controller mode is switched once to mouse mode after boot.
+  You can switch back to gamepad after that, but be aware that they may still not work as expected.
+  Controller V2 seems to have more issues when mouse codes are assigned to them, compared to V1.
+  [**This is very very unlikely to be fixed!**]
+
 ### Win5
 
 - RT and LT ignore the keycode value in firmware config
-
-## Current controllerV2 limitations
-
-- To apply the changes permanently, switch the controller mode back and forth using the physical button on device
 
 ## Linux
 
@@ -48,10 +52,19 @@ Chain multiple keys by assigning an incremental start time and a fixed hold time
 To simulate a single key press, set one key slot, start time to 0
 and hold time to something high like **300**.
 
+## How to build
+
+```bash
+git clone --recursive https://github.com/OpenWinControls/OpenWinControlsCLI
+git submodule update --init --recursive
+cmake -B build
+make -C build
+```
+
 ### Help
 
 ```text
-OpenWinControlsCLI 2.6
+OpenWinControlsCLI 2.8
 
 Usage: OpenWinControlsCLI command [args]
 
@@ -60,29 +73,37 @@ Some options only apply to V1 or V2, incompatible options, if provided, are igno
 Commands:
 
   help
-    show help
+    Show help
 
   keys
-    print supported keyboard[&mouse] mode keys
+    Print supported keyboard[&mouse] mode keys
 
   xkeys
-    print supported xinput mode keys
+    Print supported xinput mode keys
 
   set option value [..]
-    set firmware settings
+    Set firmware settings
     Example: set du w dl space [..]
 
   export file_name.yaml
-    export current firmware mapping to a yaml file to share with others or apply back later
+    Export current firmware mapping to a yaml file to share with others or apply back later
 
   import file_name.yaml
-    apply mapping from file
+    Apply mapping from file
 
   print
     Print current firmware settings
-    
+
   reset
     Reset controller memory to a known working state
+
+Command variants:
+
+  mset option value [..]
+  mimport file_name.yaml
+    Write configuration to controller temporary memory
+    Changes are lost after sleep/reboot/shutdown, this is useful to save some writes
+    On protocols where temp memory is not supported, these variants will behave the same as the standard form
 
 Options:
 
@@ -313,6 +334,7 @@ Notes:
      The 4th time slot is special, it sets the whole macro start time.
 
   Controller V2 features:
+     Supports writing configuration to a temporary memory (see command variants).
      Supports up to 32 key/time/hold slots for back buttons.
      The number of active key slots is automatically updated on write.
 
@@ -322,12 +344,4 @@ Notes:
      A value of -10 removes the deadzone.
      Boundary refers to the circularity, 0 is the default value from GPD, roughtly ~13% average error.
      A value of -10 should lessen the average error on circularity tests.
-```
-## How to build
-
-```bash
-git clone --recursive https://github.com/OpenWinControls/OpenWinControlsCLI
-git submodule update --init --recursive
-cmake -B build
-make -C build
 ```
