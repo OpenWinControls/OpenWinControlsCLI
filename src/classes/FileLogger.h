@@ -23,17 +23,17 @@
 namespace OWC {
     class FileLogger final {
     private:
-        static inline FileLogger *instance = nullptr;
         std::wofstream logF;
 
         FileLogger() = default;
 
     public:
         FileLogger(FileLogger &) = delete;
+        FileLogger &operator=(const FileLogger &) = delete;
 
         ~FileLogger();
 
-        static FileLogger *getInstance();
+        static FileLogger &get();
         [[nodiscard]] bool init();
         void write(const std::wstring &msg, std::source_location loc = std::source_location::current());
         void writeExt(const std::wstring &msg);

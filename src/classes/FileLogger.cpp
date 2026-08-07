@@ -23,14 +23,12 @@
 namespace OWC {
     FileLogger::~FileLogger() {
         logF.close();
-        delete instance;
     }
 
-    FileLogger *FileLogger::getInstance() {
-        if (!instance)
-            instance = new FileLogger();
+    FileLogger &FileLogger::get() {
+        static FileLogger logger;
 
-        return instance;
+        return logger;
     }
 
     bool FileLogger::init() {
