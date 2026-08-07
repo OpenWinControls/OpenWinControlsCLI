@@ -53,7 +53,7 @@ static std::string getProduct() {
     return prod;
 #elif defined(_WIN32)
     DWORD bufSz = 0;
-    std::unique_ptr<TCHAR[]> buf;
+    std::unique_ptr<char[]> buf;
     LSTATUS ret;
     HKEY rkey;
 
@@ -70,8 +70,8 @@ static std::string getProduct() {
         return "";
     }
 
-    bufSz += sizeof(TCHAR);
-    buf = std::make_unique<TCHAR[]>(bufSz);
+    bufSz += sizeof(char);
+    buf = std::make_unique<char[]>(bufSz);
 
     ret = RegGetValueA(rkey, nullptr, "BaseBoardProduct", RRF_RT_REG_SZ, nullptr, buf.get(), &bufSz);
     if (ret != ERROR_SUCCESS) {
