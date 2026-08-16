@@ -43,14 +43,21 @@ Load the new rules:
 sudo udevadm control --reload-rules && sudo udevadm trigger
 ```
 
-## Usage
+## Controller V2 macro functions
 
-**Controller V2 macros**
+Chain up to 32 keys to create macros or key shortcuts. (_**firmware is buggy and badly coded, play with timings**_)
 
-Chain multiple keys by assigning an incremental start time and a fixed hold time to each slot.
+### Simulate single button click
 
-To simulate a single key press, set one key slot, start time to 0
-and hold time to something high like **300**.
+```
+r4 [key] r4d 0 r4h 100
+```
+
+### Simulate key shortcut
+
+```
+r4 [key 1],[key 2],[..more] r4d 100,100,[..100] r4h 100,100,[..100]
+```
 
 ## How to build
 
