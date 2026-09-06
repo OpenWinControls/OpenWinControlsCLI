@@ -1,3 +1,8 @@
+## 2.9
+
+- Win max 3 support
+- Update modules
+
 ## 2.8.1
 
 - Fix mimport arg variant
