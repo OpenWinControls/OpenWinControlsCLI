@@ -36,6 +36,7 @@ static constexpr char mini25L[] = "G1617-02-L";
 static constexpr char max2_22[] = "G1619-04";
 static constexpr char max2_25[] = "G1619-05";
 static constexpr char win5[] = "G1618-05";
+static constexpr char max3[] = "G1638-01";
 
 [[nodiscard]]
 static std::string getProduct() {
@@ -97,7 +98,7 @@ static std::shared_ptr<OWC::Controller> getDevice(const std::string &product) {
         device = std::make_shared<OWC::ControllerV1>(OWC::ControllerFeature::DeadZoneControlV1 | OWC::ControllerFeature::RumbleV1);
     //else if (product == win3)
     //    device = std::make_shared<OWC::ControllerV1>();
-    else if (product == win5)
+    else if (product == win5 || product == max3)
         device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1 | OWC::ControllerFeature::BackButton4);
     else if (product == mini25 || product == mini25L)
         device = std::make_shared<OWC::ControllerV2>(OWC::ControllerFeature::DeadZoneControlV1 | OWC::ControllerFeature::RumbleV1 | OWC::ControllerFeature::XinputMappingV1);
@@ -125,6 +126,8 @@ static bool isCompatible(const std::string &product, const std::shared_ptr<OWC::
         isSupported = major >= 1 && minor >= 0x8;
     else if (product == mini25 || product == mini25L)
         isSupported = major >= 1 && minor >= 0x22;
+    else if (product == max3)
+        return true;
 
     if (!isSupported)
         std::cout << "version " << major << "." << minor << " is not supported, update your firmware.\n";
