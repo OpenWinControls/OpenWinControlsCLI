@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(BUILD_SHARED_LIBS OFF)
+set(YAML_MSVC_SHARED_RT ON)
 add_subdirectory(src/extern/libOpenWinControls)
 add_subdirectory(src/extern/yaml-cpp)
 
